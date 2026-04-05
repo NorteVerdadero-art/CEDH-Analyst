@@ -1,0 +1,2 @@
+# cedh-deck-analyst — no external dependencies
+# Requires Python 3.9+; uses only the standard library.

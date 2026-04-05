@@ -1,0 +1,744 @@
+[
+  {
+    "name": "Sol Ring",
+    "printId": 25527,
+    "cer": 8.7,
+    "tier": "S-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Mox Opal",
+    "printId": 36238,
+    "cer": 9.2,
+    "tier": "S-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Ancient Tomb",
+    "printId": 1877,
+    "cer": 9.0,
+    "tier": "S-Tier",
+    "gc": true,
+    "cmc": 0,
+    "type_line": "Land"
+  },
+  {
+    "name": "The One Ring",
+    "printId": 89871,
+    "cer": 8.8,
+    "tier": "S-Tier",
+    "gc": true,
+    "cmc": 4,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Sensei's Divining Top",
+    "printId": 5271,
+    "cer": 8.7,
+    "tier": "S-Tier",
+    "gc": true,
+    "cmc": 1,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Krark-Clan Ironworks",
+    "printId": 5738,
+    "cer": 8.5,
+    "tier": "S-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Jeska's Will",
+    "printId": 95178,
+    "cer": 8.4,
+    "tier": "S-Tier",
+    "gc": true,
+    "cmc": 2,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Blood Moon",
+    "printId": 5490,
+    "cer": 8.2,
+    "tier": "S-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Enchantment"
+  },
+  {
+    "name": "Magda, Brazen Outlaw",
+    "printId": 88621,
+    "cer": 8.0,
+    "tier": "S-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Creature"
+  },
+  {
+    "name": "Chrome Mox",
+    "printId": 5858,
+    "cer": 7.9,
+    "tier": "A-Tier",
+    "gc": true,
+    "cmc": 0,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Lotus Petal",
+    "printId": 1748,
+    "cer": 7.8,
+    "tier": "A-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Mystic Forge",
+    "printId": 49090,
+    "cer": 7.7,
+    "tier": "A-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Gamble",
+    "printId": 2011,
+    "cer": 7.6,
+    "tier": "A-Tier",
+    "gc": true,
+    "cmc": 1,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Voltaic Construct",
+    "printId": 5718,
+    "cer": 7.6,
+    "tier": "A-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Maskwood Nexus",
+    "printId": 59016,
+    "cer": 7.5,
+    "tier": "A-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Myr Retriever",
+    "printId": 5774,
+    "cer": 7.5,
+    "tier": "A-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Faithless Looting",
+    "printId": 23736,
+    "cer": 7.5,
+    "tier": "A-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Arcane Signet",
+    "printId": 79837,
+    "cer": 7.2,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Fellwar Stone",
+    "printId": 25518,
+    "cer": 7.0,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Foundry Inspector",
+    "printId": 61478,
+    "cer": 6.9,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Clock of Omens",
+    "printId": 5701,
+    "cer": 6.8,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Ichor Wellspring",
+    "printId": 932,
+    "cer": 6.7,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Unwinding Clock",
+    "printId": 21748,
+    "cer": 6.7,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Vandalblast",
+    "printId": 34866,
+    "cer": 6.6,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Lightning Greaves",
+    "printId": 4668,
+    "cer": 6.5,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Swiftfoot Boots",
+    "printId": 25530,
+    "cer": 6.5,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Semblance Anvil",
+    "printId": 21738,
+    "cer": 6.4,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Helm of Awakening",
+    "printId": 1615,
+    "cer": 6.4,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Treasure Vault",
+    "printId": 90567,
+    "cer": 6.3,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land"
+  },
+  {
+    "name": "Great Furnace",
+    "printId": 5733,
+    "cer": 6.2,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land"
+  },
+  {
+    "name": "Professional Face-Breaker",
+    "printId": 103985,
+    "cer": 6.2,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Creature"
+  },
+  {
+    "name": "Chaos Warp",
+    "printId": 25511,
+    "cer": 6.2,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Instant"
+  },
+  {
+    "name": "Springleaf Drum",
+    "printId": 12657,
+    "cer": 6.1,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Saheeli's Directive",
+    "printId": 68261,
+    "cer": 6.0,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 6,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Deflecting Swat",
+    "printId": 53406,
+    "cer": 6.0,
+    "tier": "B-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Instant"
+  },
+  {
+    "name": "Flare of Duplication",
+    "printId": 123890,
+    "cer": 5.8,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Instant"
+  },
+  {
+    "name": "Thousand-Year Elixir",
+    "printId": 15188,
+    "cer": 5.7,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Defense Grid",
+    "printId": 2148,
+    "cer": 5.6,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Daretti, Scrap Savant",
+    "printId": 49310,
+    "cer": 5.5,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Planeswalker"
+  },
+  {
+    "name": "Adaptive Automaton",
+    "printId": 12216,
+    "cer": 5.5,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Metallic Mimic",
+    "printId": 32853,
+    "cer": 5.5,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Bloodline Pretender",
+    "printId": 59036,
+    "cer": 5.4,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Universal Automaton",
+    "printId": 77178,
+    "cer": 5.3,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Crime Novelist",
+    "printId": 118652,
+    "cer": 5.3,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Creature"
+  },
+  {
+    "name": "Xorn",
+    "printId": 65506,
+    "cer": 5.2,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Creature"
+  },
+  {
+    "name": "Liquimetal Torque",
+    "printId": 63573,
+    "cer": 5.2,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Manifold Key",
+    "printId": 77139,
+    "cer": 5.1,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Liquimetal Coating",
+    "printId": 1151,
+    "cer": 5.0,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Reckless Handling",
+    "printId": 105254,
+    "cer": 5.0,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Electroduplicate",
+    "printId": 108421,
+    "cer": 4.8,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Instant"
+  },
+  {
+    "name": "Shimmer Myr",
+    "printId": 21740,
+    "cer": 4.8,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact Creature"
+  },
+  {
+    "name": "Grapeshot",
+    "printId": 13816,
+    "cer": 4.8,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Collector's Vault",
+    "printId": 116218,
+    "cer": 4.7,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Valakut Awakening",
+    "printId": 86904,
+    "cer": 4.7,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Strike It Rich",
+    "printId": 63736,
+    "cer": 4.6,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Sorcery"
+  },
+  {
+    "name": "Hazoret's Monument",
+    "printId": 67095,
+    "cer": 4.6,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact"
+  },
+  {
+    "name": "Command Beacon",
+    "printId": 49298,
+    "cer": 4.6,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land"
+  },
+  {
+    "name": "Wandering Archaic",
+    "printId": 94917,
+    "cer": 4.5,
+    "tier": "C-Tier",
+    "gc": false,
+    "cmc": 5,
+    "type_line": "Creature"
+  },
+  {
+    "name": "Ruination",
+    "printId": 2287,
+    "cer": 4.3,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 4,
+    "type_line": "Sorcery",
+    "note": "LD simétrica peligrosa en Mono-R"
+  },
+  {
+    "name": "Reckless Fireweaver",
+    "printId": 62083,
+    "cer": 4.2,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Creature",
+    "note": "Win-more sin acelerar combo"
+  },
+  {
+    "name": "Into the Fire",
+    "printId": 119732,
+    "cer": 3.9,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Instant",
+    "note": "Removal situacional"
+  },
+  {
+    "name": "Buried Ruin",
+    "printId": 12246,
+    "cer": 3.8,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Goblin Engineer lo supera"
+  },
+  {
+    "name": "Soul of New Phyrexia",
+    "printId": 37208,
+    "cer": 3.7,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 6,
+    "type_line": "Artifact Creature",
+    "note": "CMC 6 prohibitivo"
+  },
+  {
+    "name": "Magda, the Hoardmaster",
+    "printId": 109347,
+    "cer": 3.6,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Creature",
+    "note": "Redundancia débil"
+  },
+  {
+    "name": "Spiteful Banditry",
+    "printId": 118680,
+    "cer": 3.5,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 5,
+    "type_line": "Enchantment",
+    "note": "CMC 5 para wrath condicional"
+  },
+  {
+    "name": "Monument to Endurance",
+    "printId": 118667,
+    "cer": 3.4,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Artifact",
+    "note": "Sinergia graveyard poco clara"
+  },
+  {
+    "name": "Dwarven Blastminer",
+    "printId": 4503,
+    "cer": 3.3,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Creature",
+    "note": "LD incremental lento"
+  },
+  {
+    "name": "Artifact Blast",
+    "printId": 259,
+    "cer": 3.2,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Instant",
+    "note": "Solo sirve contra artefactos"
+  },
+  {
+    "name": "Winter Moon",
+    "printId": 116240,
+    "cer": 3.1,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Enchantment",
+    "note": "Blood Moon lo reemplaza siempre"
+  },
+  {
+    "name": "Survivors' Encampment",
+    "printId": 67099,
+    "cer": 3.1,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Entra tapped, ineficiente"
+  },
+  {
+    "name": "Redirect Lightning",
+    "printId": 118677,
+    "cer": 3.0,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 2,
+    "type_line": "Instant",
+    "note": "Sin impacto en el plan principal"
+  },
+  {
+    "name": "Dead/Gone",
+    "printId": 13697,
+    "cer": 3.0,
+    "tier": "D-Tier",
+    "gc": false,
+    "cmc": 1,
+    "type_line": "Instant",
+    "note": "Chaos Warp lo supera"
+  },
+  {
+    "name": "Untimely Malfunction",
+    "printId": 118693,
+    "cer": 2.5,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Instant",
+    "note": "Sin impacto relevante"
+  },
+  {
+    "name": "Siege Smash",
+    "printId": 118679,
+    "cer": 2.5,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 3,
+    "type_line": "Sorcery",
+    "note": "No aplica en el plan combo"
+  },
+  {
+    "name": "Blighted Gorge",
+    "printId": 49295,
+    "cer": 2.5,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Entra tapped, daño insignificante"
+  },
+  {
+    "name": "Ash Barrens",
+    "printId": 32235,
+    "cer": 2.5,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Solo fetchea Mountains"
+  },
+  {
+    "name": "Smoldering Crater",
+    "printId": 2303,
+    "cer": 2.0,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Entra tapped + 3 mana = draw 1"
+  },
+  {
+    "name": "Ghost Quarter",
+    "printId": 17226,
+    "cer": 2.0,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Sin sinergia real"
+  },
+  {
+    "name": "Rogue's Passage",
+    "printId": 35220,
+    "cer": 1.8,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Plan es combo no ataque"
+  },
+  {
+    "name": "Volatile Fault",
+    "printId": 118695,
+    "cer": 1.5,
+    "tier": "F-Tier",
+    "gc": false,
+    "cmc": 0,
+    "type_line": "Land",
+    "note": "Entra tapped, efecto marginal"
+  }
+]

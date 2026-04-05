@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+venv/
+
+# Generated output — don't commit run artifacts
+output/
+/tmp/
+
+# Cache files (regenerated automatically)
+data/mtgstocks_id_cache.json

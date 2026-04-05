@@ -1,0 +1,1759 @@
+{
+  "bracket": 4,
+  "avg_cer": 5.49,
+  "total_cards": 80,
+  "game_changers_count": 6,
+  "estimated_price_usd": 893.1,
+  "tier_distribution": {
+    "S-Tier": 9,
+    "A-Tier": 8,
+    "B-Tier": 18,
+    "C-Tier": 23,
+    "D-Tier": 14,
+    "F-Tier": 8
+  },
+  "all_cards": [
+    {
+      "name": "Mox Opal",
+      "cer": 9.2,
+      "tier": "S-Tier",
+      "rol": "Fast mana / metalcraft",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 9.5,
+        "pir": 9.0,
+        "tsc": 9.8,
+        "syn": 8.5,
+        "flx": 8.8
+      },
+      "price_usd": 267.0
+    },
+    {
+      "name": "Ancient Tomb",
+      "cer": 9.0,
+      "tier": "S-Tier",
+      "rol": "Mana land",
+      "gc": true,
+      "cmc": 0,
+      "type_line": "Land",
+      "components": {
+        "wir": 9.2,
+        "pir": 8.8,
+        "tsc": 9.5,
+        "syn": 8.0,
+        "flx": 9.0
+      },
+      "price_usd": 162.0
+    },
+    {
+      "name": "The One Ring",
+      "cer": 8.8,
+      "tier": "S-Tier",
+      "rol": "Card draw / protection",
+      "gc": true,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 9.0,
+        "pir": 8.5,
+        "tsc": 7.5,
+        "syn": 9.2,
+        "flx": 9.5
+      },
+      "price_usd": 105.0
+    },
+    {
+      "name": "Sol Ring",
+      "cer": 8.7,
+      "tier": "S-Tier",
+      "rol": "Mana acceleration",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 9.8,
+        "pir": 9.5,
+        "tsc": 9.2,
+        "syn": 9.0,
+        "flx": 9.5
+      },
+      "price_usd": 2.5
+    },
+    {
+      "name": "Sensei's Divining Top",
+      "cer": 8.7,
+      "tier": "S-Tier",
+      "rol": "Library manipulation",
+      "gc": true,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 8.8,
+        "pir": 8.5,
+        "tsc": 8.5,
+        "syn": 9.0,
+        "flx": 9.2
+      },
+      "price_usd": 42.0
+    },
+    {
+      "name": "Krark-Clan Ironworks",
+      "cer": 8.5,
+      "tier": "S-Tier",
+      "rol": "Sac outlet / combo engine",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 8.8,
+        "pir": 7.5,
+        "tsc": 8.0,
+        "syn": 9.5,
+        "flx": 8.0
+      },
+      "price_usd": 8.0
+    },
+    {
+      "name": "Jeska's Will",
+      "cer": 8.4,
+      "tier": "S-Tier",
+      "rol": "Mana burst / card access",
+      "gc": true,
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 8.5,
+        "pir": 8.0,
+        "tsc": 9.0,
+        "syn": 7.8,
+        "flx": 8.0
+      },
+      "price_usd": 18.0
+    },
+    {
+      "name": "Blood Moon",
+      "cer": 8.2,
+      "tier": "S-Tier",
+      "rol": "Stax / hate piece",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Enchantment",
+      "components": {
+        "wir": 8.5,
+        "pir": 7.8,
+        "tsc": 7.5,
+        "syn": 8.0,
+        "flx": 8.5
+      },
+      "price_usd": 10.0
+    },
+    {
+      "name": "Magda, Brazen Outlaw",
+      "cer": 8.0,
+      "tier": "S-Tier",
+      "rol": "Comandante / engine",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Creature",
+      "components": {
+        "wir": 8.2,
+        "pir": 8.5,
+        "tsc": 8.0,
+        "syn": 9.0,
+        "flx": 6.5
+      },
+      "price_usd": 1.7
+    },
+    {
+      "name": "Chrome Mox",
+      "cer": 7.9,
+      "tier": "A-Tier",
+      "rol": "Fast mana",
+      "gc": true,
+      "cmc": 0,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 8.0,
+        "pir": 7.5,
+        "tsc": 9.0,
+        "syn": 7.0,
+        "flx": 8.0
+      },
+      "price_usd": 147.0
+    },
+    {
+      "name": "Lotus Petal",
+      "cer": 7.8,
+      "tier": "A-Tier",
+      "rol": "Fast mana de un solo uso",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 7.8,
+        "pir": 7.5,
+        "tsc": 9.2,
+        "syn": 6.5,
+        "flx": 8.0
+      },
+      "price_usd": 8.0
+    },
+    {
+      "name": "Mystic Forge",
+      "cer": 7.7,
+      "tier": "A-Tier",
+      "rol": "Card advantage engine",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 7.8,
+        "pir": 7.2,
+        "tsc": 7.5,
+        "syn": 8.5,
+        "flx": 7.5
+      },
+      "price_usd": 5.0
+    },
+    {
+      "name": "Gamble",
+      "cer": 7.6,
+      "tier": "A-Tier",
+      "rol": "Tutor (riesgo discarding)",
+      "gc": true,
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 7.5,
+        "pir": 7.8,
+        "tsc": 8.0,
+        "syn": 7.5,
+        "flx": 7.2
+      },
+      "price_usd": 4.0
+    },
+    {
+      "name": "Voltaic Construct",
+      "cer": 7.6,
+      "tier": "A-Tier",
+      "rol": "Combo piece loop Magda",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 7.5,
+        "pir": 6.5,
+        "tsc": 7.8,
+        "syn": 9.5,
+        "flx": 6.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Maskwood Nexus",
+      "cer": 7.5,
+      "tier": "A-Tier",
+      "rol": "Combo enabler \u2014 todos son Dwarves",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 7.5,
+        "pir": 6.0,
+        "tsc": 7.0,
+        "syn": 9.8,
+        "flx": 7.5
+      },
+      "price_usd": 3.0
+    },
+    {
+      "name": "Myr Retriever",
+      "cer": 7.5,
+      "tier": "A-Tier",
+      "rol": "Recursi\u00f3n / combo piece",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 7.2,
+        "pir": 6.8,
+        "tsc": 7.5,
+        "syn": 8.8,
+        "flx": 7.0
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Faithless Looting",
+      "cer": 7.5,
+      "tier": "A-Tier",
+      "rol": "Card filtering / setup",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 7.5,
+        "pir": 7.8,
+        "tsc": 8.0,
+        "syn": 7.0,
+        "flx": 7.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Arcane Signet",
+      "cer": 7.2,
+      "tier": "B-Tier",
+      "rol": "Mana rock estable",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 7.0,
+        "pir": 7.5,
+        "tsc": 7.5,
+        "syn": 6.0,
+        "flx": 8.0
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Fellwar Stone",
+      "cer": 7.0,
+      "tier": "B-Tier",
+      "rol": "Mana rock",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 7.0,
+        "pir": 7.2,
+        "tsc": 7.5,
+        "syn": 6.0,
+        "flx": 7.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Foundry Inspector",
+      "cer": 6.9,
+      "tier": "B-Tier",
+      "rol": "Cost reduction",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 6.8,
+        "pir": 6.5,
+        "tsc": 7.0,
+        "syn": 7.5,
+        "flx": 7.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Clock of Omens",
+      "cer": 6.8,
+      "tier": "B-Tier",
+      "rol": "Untap engine / combo",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.5,
+        "pir": 6.0,
+        "tsc": 7.0,
+        "syn": 8.5,
+        "flx": 6.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Ichor Wellspring",
+      "cer": 6.7,
+      "tier": "B-Tier",
+      "rol": "Card draw / sac synergy",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.5,
+        "pir": 6.8,
+        "tsc": 6.5,
+        "syn": 7.5,
+        "flx": 6.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Unwinding Clock",
+      "cer": 6.7,
+      "tier": "B-Tier",
+      "rol": "Untap engine",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.5,
+        "pir": 6.0,
+        "tsc": 7.0,
+        "syn": 8.0,
+        "flx": 6.0
+      },
+      "price_usd": 5.0
+    },
+    {
+      "name": "Vandalblast",
+      "cer": 6.6,
+      "tier": "B-Tier",
+      "rol": "Removal / wipe artifacts",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 6.5,
+        "pir": 7.0,
+        "tsc": 6.5,
+        "syn": 6.0,
+        "flx": 7.0
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Lightning Greaves",
+      "cer": 6.5,
+      "tier": "B-Tier",
+      "rol": "Haste + protecci\u00f3n Magda",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.5,
+        "pir": 7.0,
+        "tsc": 7.2,
+        "syn": 5.5,
+        "flx": 6.5
+      },
+      "price_usd": 3.0
+    },
+    {
+      "name": "Swiftfoot Boots",
+      "cer": 6.5,
+      "tier": "B-Tier",
+      "rol": "Haste + protecci\u00f3n",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.5,
+        "pir": 7.0,
+        "tsc": 7.0,
+        "syn": 5.5,
+        "flx": 6.8
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Semblance Anvil",
+      "cer": 6.4,
+      "tier": "B-Tier",
+      "rol": "Cost reduction engine",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.2,
+        "pir": 5.8,
+        "tsc": 7.0,
+        "syn": 7.5,
+        "flx": 6.0
+      },
+      "price_usd": 2.0
+    },
+    {
+      "name": "Helm of Awakening",
+      "cer": 6.4,
+      "tier": "B-Tier",
+      "rol": "Cost reduction / combo",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 6.0,
+        "pir": 5.5,
+        "tsc": 7.0,
+        "syn": 8.0,
+        "flx": 6.5
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Treasure Vault",
+      "cer": 6.3,
+      "tier": "B-Tier",
+      "rol": "Treasure engine / artifact land",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "components": {
+        "wir": 6.0,
+        "pir": 6.5,
+        "tsc": 6.5,
+        "syn": 7.0,
+        "flx": 5.5
+      },
+      "price_usd": 8.0
+    },
+    {
+      "name": "Great Furnace",
+      "cer": 6.2,
+      "tier": "B-Tier",
+      "rol": "Artifact land / metalcraft fuel",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "components": {
+        "wir": 6.0,
+        "pir": 6.5,
+        "tsc": 6.5,
+        "syn": 6.5,
+        "flx": 5.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Professional Face-Breaker",
+      "cer": 6.2,
+      "tier": "B-Tier",
+      "rol": "Treasure + impulsive draw",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Creature",
+      "components": {
+        "wir": 6.2,
+        "pir": 6.0,
+        "tsc": 6.0,
+        "syn": 7.0,
+        "flx": 6.0
+      },
+      "price_usd": 3.0
+    },
+    {
+      "name": "Chaos Warp",
+      "cer": 6.2,
+      "tier": "B-Tier",
+      "rol": "Removal universal en mono-R",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Instant",
+      "components": {
+        "wir": 6.0,
+        "pir": 6.5,
+        "tsc": 6.0,
+        "syn": 5.5,
+        "flx": 7.0
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Springleaf Drum",
+      "cer": 6.1,
+      "tier": "B-Tier",
+      "rol": "Mana + activa Dwarves",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 5.8,
+        "pir": 6.0,
+        "tsc": 6.8,
+        "syn": 7.0,
+        "flx": 5.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Saheeli's Directive",
+      "cer": 6.0,
+      "tier": "B-Tier",
+      "rol": "Mass cast / pseudo-tutor",
+      "gc": false,
+      "cmc": 6,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 5.8,
+        "pir": 5.5,
+        "tsc": 5.5,
+        "syn": 7.5,
+        "flx": 6.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Deflecting Swat",
+      "cer": 6.0,
+      "tier": "B-Tier",
+      "rol": "Counter gratis (ya no GC desde oct 2025)",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Instant",
+      "components": {
+        "wir": 6.2,
+        "pir": 6.0,
+        "tsc": 6.0,
+        "syn": 5.8,
+        "flx": 6.5
+      },
+      "price_usd": 8.0
+    },
+    {
+      "name": "Flare of Duplication",
+      "cer": 5.8,
+      "tier": "C-Tier",
+      "rol": "Copy effect",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Instant",
+      "components": {
+        "wir": 5.5,
+        "pir": 5.5,
+        "tsc": 6.0,
+        "syn": 6.5,
+        "flx": 5.5
+      },
+      "price_usd": 2.0
+    },
+    {
+      "name": "Thousand-Year Elixir",
+      "cer": 5.7,
+      "tier": "C-Tier",
+      "rol": "Haste / retap Magda",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 5.5,
+        "pir": 5.5,
+        "tsc": 6.0,
+        "syn": 6.5,
+        "flx": 5.0
+      },
+      "price_usd": 3.0
+    },
+    {
+      "name": "Defense Grid",
+      "cer": 5.6,
+      "tier": "C-Tier",
+      "rol": "Stax / protecci\u00f3n solitaria",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 5.5,
+        "pir": 5.0,
+        "tsc": 6.0,
+        "syn": 5.5,
+        "flx": 6.0
+      },
+      "price_usd": 10.0
+    },
+    {
+      "name": "Daretti, Scrap Savant",
+      "cer": 5.5,
+      "tier": "C-Tier",
+      "rol": "Recursi\u00f3n / looting",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Planeswalker",
+      "components": {
+        "wir": 5.2,
+        "pir": 5.8,
+        "tsc": 5.0,
+        "syn": 6.0,
+        "flx": 5.8
+      },
+      "price_usd": 2.0
+    },
+    {
+      "name": "Adaptive Automaton",
+      "cer": 5.5,
+      "tier": "C-Tier",
+      "rol": "Dwarf lord / combo enabler",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 5.5,
+        "pir": 5.0,
+        "tsc": 5.5,
+        "syn": 7.0,
+        "flx": 5.5
+      },
+      "price_usd": 2.0
+    },
+    {
+      "name": "Metallic Mimic",
+      "cer": 5.5,
+      "tier": "C-Tier",
+      "rol": "Dwarf lord / combo enabler",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 5.5,
+        "pir": 5.0,
+        "tsc": 5.5,
+        "syn": 7.0,
+        "flx": 5.5
+      },
+      "price_usd": 3.0
+    },
+    {
+      "name": "Bloodline Pretender",
+      "cer": 5.4,
+      "tier": "C-Tier",
+      "rol": "Changeling / Dwarf barato",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 5.2,
+        "pir": 4.8,
+        "tsc": 5.5,
+        "syn": 6.8,
+        "flx": 5.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Universal Automaton",
+      "cer": 5.3,
+      "tier": "C-Tier",
+      "rol": "Changeling CMC 1",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 5.0,
+        "pir": 4.8,
+        "tsc": 6.0,
+        "syn": 6.5,
+        "flx": 5.0
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Crime Novelist",
+      "cer": 5.3,
+      "tier": "C-Tier",
+      "rol": "Mana de sacrificio de treasures",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Creature",
+      "components": {
+        "wir": 5.0,
+        "pir": 5.0,
+        "tsc": 5.5,
+        "syn": 6.5,
+        "flx": 5.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Xorn",
+      "cer": 5.2,
+      "tier": "C-Tier",
+      "rol": "Treasure multiplier",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Creature",
+      "components": {
+        "wir": 5.0,
+        "pir": 5.0,
+        "tsc": 5.0,
+        "syn": 6.5,
+        "flx": 5.0
+      },
+      "price_usd": 2.0
+    },
+    {
+      "name": "Liquimetal Torque",
+      "cer": 5.2,
+      "tier": "C-Tier",
+      "rol": "Mana rock + artifact enabler",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 5.0,
+        "pir": 5.0,
+        "tsc": 5.8,
+        "syn": 5.8,
+        "flx": 5.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Manifold Key",
+      "cer": 5.1,
+      "tier": "C-Tier",
+      "rol": "Untap artifact / unblockable",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 5.0,
+        "pir": 5.0,
+        "tsc": 5.5,
+        "syn": 5.5,
+        "flx": 5.0
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Liquimetal Coating",
+      "cer": 5.0,
+      "tier": "C-Tier",
+      "rol": "Hace permanentes artifact",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 4.8,
+        "pir": 4.5,
+        "tsc": 5.5,
+        "syn": 6.5,
+        "flx": 4.8
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Reckless Handling",
+      "cer": 5.0,
+      "tier": "C-Tier",
+      "rol": "Tutor de artefacto (con costo)",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 5.0,
+        "pir": 5.0,
+        "tsc": 5.5,
+        "syn": 5.5,
+        "flx": 4.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Electroduplicate",
+      "cer": 4.8,
+      "tier": "C-Tier",
+      "rol": "Copia Magda / flashback",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Instant",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.5,
+        "tsc": 5.0,
+        "syn": 6.0,
+        "flx": 4.5
+      },
+      "price_usd": 0.3
+    },
+    {
+      "name": "Shimmer Myr",
+      "cer": 4.8,
+      "tier": "C-Tier",
+      "rol": "Flash para artefactos",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact Creature",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.5,
+        "tsc": 5.0,
+        "syn": 5.8,
+        "flx": 5.0
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Grapeshot",
+      "cer": 4.8,
+      "tier": "C-Tier",
+      "rol": "Wincon storm / treasures",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.5,
+        "tsc": 5.0,
+        "syn": 6.5,
+        "flx": 4.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Collector's Vault",
+      "cer": 4.7,
+      "tier": "C-Tier",
+      "rol": "Draw / treasure engine",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.8,
+        "tsc": 5.0,
+        "syn": 5.0,
+        "flx": 4.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Valakut Awakening",
+      "cer": 4.7,
+      "tier": "C-Tier",
+      "rol": "Card filtering / hand reset",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.8,
+        "tsc": 5.0,
+        "syn": 4.8,
+        "flx": 5.0
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Strike It Rich",
+      "cer": 4.6,
+      "tier": "C-Tier",
+      "rol": "Treasure + flashback",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.5,
+        "tsc": 5.0,
+        "syn": 5.0,
+        "flx": 4.5
+      },
+      "price_usd": 0.3
+    },
+    {
+      "name": "Hazoret's Monument",
+      "cer": 4.6,
+      "tier": "C-Tier",
+      "rol": "Cost reduction + filtering",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.5,
+        "tsc": 5.0,
+        "syn": 5.0,
+        "flx": 4.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Command Beacon",
+      "cer": 4.6,
+      "tier": "C-Tier",
+      "rol": "Evita tax de comandante",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "components": {
+        "wir": 4.5,
+        "pir": 5.0,
+        "tsc": 5.0,
+        "syn": 4.5,
+        "flx": 5.0
+      },
+      "price_usd": 10.0
+    },
+    {
+      "name": "Wandering Archaic",
+      "cer": 4.5,
+      "tier": "C-Tier",
+      "rol": "Stax / copy spells",
+      "gc": false,
+      "cmc": 5,
+      "type_line": "Creature",
+      "components": {
+        "wir": 4.5,
+        "pir": 4.0,
+        "tsc": 4.5,
+        "syn": 5.5,
+        "flx": 5.0
+      },
+      "price_usd": 3.0
+    },
+    {
+      "name": "Ruination",
+      "cer": 4.3,
+      "tier": "D-Tier",
+      "rol": "LD sim\u00e9trica peligrosa en Mono-R",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Sorcery",
+      "note": "Arriesga el propio plan de mana",
+      "components": {
+        "wir": 4.0,
+        "pir": 4.0,
+        "tsc": 4.5,
+        "syn": 4.5,
+        "flx": 4.5
+      },
+      "price_usd": 8.0
+    },
+    {
+      "name": "Reckless Fireweaver",
+      "cer": 4.2,
+      "tier": "D-Tier",
+      "rol": "Da\u00f1o por ETB artifacts (lento)",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Creature",
+      "note": "Win-more, no acelera el combo",
+      "components": {
+        "wir": 4.0,
+        "pir": 3.8,
+        "tsc": 4.5,
+        "syn": 5.5,
+        "flx": 3.5
+      },
+      "price_usd": 0.3
+    },
+    {
+      "name": "Into the Fire",
+      "cer": 3.9,
+      "tier": "D-Tier",
+      "rol": "Removal situacional",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Instant",
+      "note": "Muy situacional, bajo impacto",
+      "components": {
+        "wir": 3.8,
+        "pir": 3.5,
+        "tsc": 4.0,
+        "syn": 5.0,
+        "flx": 3.5
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Buried Ruin",
+      "cer": 3.8,
+      "tier": "D-Tier",
+      "rol": "Recursi\u00f3n de artefacto lenta",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Goblin Engineer lo reemplaza mejor",
+      "components": {
+        "wir": 3.5,
+        "pir": 4.0,
+        "tsc": 3.5,
+        "syn": 4.5,
+        "flx": 4.0
+      },
+      "price_usd": 1.5
+    },
+    {
+      "name": "Soul of New Phyrexia",
+      "cer": 3.7,
+      "tier": "D-Tier",
+      "rol": "Protecci\u00f3n muy cara (CMC 6)",
+      "gc": false,
+      "cmc": 6,
+      "type_line": "Artifact Creature",
+      "note": "CMC 6 prohibitivo en el bracket",
+      "components": {
+        "wir": 3.5,
+        "pir": 3.5,
+        "tsc": 3.0,
+        "syn": 4.5,
+        "flx": 4.0
+      },
+      "price_usd": 2.0
+    },
+    {
+      "name": "Magda, the Hoardmaster",
+      "cer": 3.6,
+      "tier": "D-Tier",
+      "rol": "Redundancia d\u00e9bil del comandante",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Creature",
+      "note": "Redundancia que no vale el slot",
+      "components": {
+        "wir": 3.5,
+        "pir": 3.5,
+        "tsc": 3.8,
+        "syn": 4.0,
+        "flx": 3.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Spiteful Banditry",
+      "cer": 3.5,
+      "tier": "D-Tier",
+      "rol": "Wrath + treasure (demasiado caro)",
+      "gc": false,
+      "cmc": 5,
+      "type_line": "Enchantment",
+      "note": "CMC 5 para un wrath condicional",
+      "components": {
+        "wir": 3.2,
+        "pir": 3.5,
+        "tsc": 3.0,
+        "syn": 4.5,
+        "flx": 3.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Monument to Endurance",
+      "cer": 3.4,
+      "tier": "D-Tier",
+      "rol": "Recursi\u00f3n mediocre",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Artifact",
+      "note": "Sinergia graveyard poco clara",
+      "components": {
+        "wir": 3.2,
+        "pir": 3.2,
+        "tsc": 3.5,
+        "syn": 4.0,
+        "flx": 3.5
+      },
+      "price_usd": 0.3
+    },
+    {
+      "name": "Dwarven Blastminer",
+      "cer": 3.3,
+      "tier": "D-Tier",
+      "rol": "LD incremental lento",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Creature",
+      "note": "Demasiado lento para el meta",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.5,
+        "syn": 4.0,
+        "flx": 3.5
+      },
+      "price_usd": 0.3
+    },
+    {
+      "name": "Artifact Blast",
+      "cer": 3.2,
+      "tier": "D-Tier",
+      "rol": "Counter solo artefactos",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Instant",
+      "note": "Solo sirve contra artefactos",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.5,
+        "syn": 3.5,
+        "flx": 3.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Winter Moon",
+      "cer": 3.1,
+      "tier": "D-Tier",
+      "rol": "Stax lite (peor que Blood Moon)",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Enchantment",
+      "note": "Blood Moon lo reemplaza siempre",
+      "components": {
+        "wir": 3.0,
+        "pir": 2.8,
+        "tsc": 3.5,
+        "syn": 3.5,
+        "flx": 3.0
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Survivors' Encampment",
+      "cer": 3.1,
+      "tier": "D-Tier",
+      "rol": "Tap dwarves para mana (lento)",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped, ineficiente",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.0,
+        "syn": 3.8,
+        "flx": 3.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Redirect Lightning",
+      "cer": 3.0,
+      "tier": "D-Tier",
+      "rol": "Removal muy situacional",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Instant",
+      "note": "Sin impacto en el plan principal",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.0,
+        "syn": 3.0,
+        "flx": 3.0
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Dead/Gone",
+      "cer": 3.0,
+      "tier": "D-Tier",
+      "rol": "Removal b\u00e1sico reemplazable",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Instant",
+      "note": "Chaos Warp lo supera en flexibilidad",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.2,
+        "syn": 2.8,
+        "flx": 3.0
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Untimely Malfunction",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Removal lento",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Instant",
+      "note": "Sin impacto relevante",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.1
+    },
+    {
+      "name": "Siege Smash",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Attack buff situacional",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Sorcery",
+      "note": "No aplica en el plan combo",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.1
+    },
+    {
+      "name": "Blighted Gorge",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Land / utility m\u00ednima",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped, da\u00f1o insignificante",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Ash Barrens",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Fetch b\u00e1sico irrelevante en Mono-R",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Solo fetchea Mountains \u2014 innecesario",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Smoldering Crater",
+      "cer": 2.0,
+      "tier": "F-Tier",
+      "rol": "Entra tapped, draw muy caro",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped + 3 mana = draw 1",
+      "components": {
+        "wir": 2.0,
+        "pir": 2.0,
+        "tsc": 2.0,
+        "syn": 2.0,
+        "flx": 2.0
+      },
+      "price_usd": 0.1
+    },
+    {
+      "name": "Ghost Quarter",
+      "cer": 2.0,
+      "tier": "F-Tier",
+      "rol": "LD sin combo que lo justifique",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Sin sinergia real en el deck",
+      "components": {
+        "wir": 2.0,
+        "pir": 2.0,
+        "tsc": 2.0,
+        "syn": 2.0,
+        "flx": 2.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Rogue's Passage",
+      "cer": 1.8,
+      "tier": "F-Tier",
+      "rol": "Unblockable irrelevante",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Plan es combo, no ataque",
+      "components": {
+        "wir": 1.8,
+        "pir": 1.8,
+        "tsc": 1.8,
+        "syn": 1.8,
+        "flx": 2.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Volatile Fault",
+      "cer": 1.5,
+      "tier": "F-Tier",
+      "rol": "LD m\u00ednima / entra tapped",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped y efecto marginal",
+      "components": {
+        "wir": 1.5,
+        "pir": 1.5,
+        "tsc": 1.5,
+        "syn": 1.5,
+        "flx": 1.5
+      },
+      "price_usd": 0.2
+    }
+  ],
+  "top_10": [
+    {
+      "name": "Mox Opal",
+      "cer": 9.2,
+      "tier": "S-Tier",
+      "rol": "Fast mana / metalcraft",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 9.5,
+        "pir": 9.0,
+        "tsc": 9.8,
+        "syn": 8.5,
+        "flx": 8.8
+      },
+      "price_usd": 267.0
+    },
+    {
+      "name": "Ancient Tomb",
+      "cer": 9.0,
+      "tier": "S-Tier",
+      "rol": "Mana land",
+      "gc": true,
+      "cmc": 0,
+      "type_line": "Land",
+      "components": {
+        "wir": 9.2,
+        "pir": 8.8,
+        "tsc": 9.5,
+        "syn": 8.0,
+        "flx": 9.0
+      },
+      "price_usd": 162.0
+    },
+    {
+      "name": "The One Ring",
+      "cer": 8.8,
+      "tier": "S-Tier",
+      "rol": "Card draw / protection",
+      "gc": true,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 9.0,
+        "pir": 8.5,
+        "tsc": 7.5,
+        "syn": 9.2,
+        "flx": 9.5
+      },
+      "price_usd": 105.0
+    },
+    {
+      "name": "Sol Ring",
+      "cer": 8.7,
+      "tier": "S-Tier",
+      "rol": "Mana acceleration",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 9.8,
+        "pir": 9.5,
+        "tsc": 9.2,
+        "syn": 9.0,
+        "flx": 9.5
+      },
+      "price_usd": 2.5
+    },
+    {
+      "name": "Sensei's Divining Top",
+      "cer": 8.7,
+      "tier": "S-Tier",
+      "rol": "Library manipulation",
+      "gc": true,
+      "cmc": 1,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 8.8,
+        "pir": 8.5,
+        "tsc": 8.5,
+        "syn": 9.0,
+        "flx": 9.2
+      },
+      "price_usd": 42.0
+    },
+    {
+      "name": "Krark-Clan Ironworks",
+      "cer": 8.5,
+      "tier": "S-Tier",
+      "rol": "Sac outlet / combo engine",
+      "gc": false,
+      "cmc": 4,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 8.8,
+        "pir": 7.5,
+        "tsc": 8.0,
+        "syn": 9.5,
+        "flx": 8.0
+      },
+      "price_usd": 8.0
+    },
+    {
+      "name": "Jeska's Will",
+      "cer": 8.4,
+      "tier": "S-Tier",
+      "rol": "Mana burst / card access",
+      "gc": true,
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "components": {
+        "wir": 8.5,
+        "pir": 8.0,
+        "tsc": 9.0,
+        "syn": 7.8,
+        "flx": 8.0
+      },
+      "price_usd": 18.0
+    },
+    {
+      "name": "Blood Moon",
+      "cer": 8.2,
+      "tier": "S-Tier",
+      "rol": "Stax / hate piece",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Enchantment",
+      "components": {
+        "wir": 8.5,
+        "pir": 7.8,
+        "tsc": 7.5,
+        "syn": 8.0,
+        "flx": 8.5
+      },
+      "price_usd": 10.0
+    },
+    {
+      "name": "Magda, Brazen Outlaw",
+      "cer": 8.0,
+      "tier": "S-Tier",
+      "rol": "Comandante / engine",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Creature",
+      "components": {
+        "wir": 8.2,
+        "pir": 8.5,
+        "tsc": 8.0,
+        "syn": 9.0,
+        "flx": 6.5
+      },
+      "price_usd": 1.7
+    },
+    {
+      "name": "Chrome Mox",
+      "cer": 7.9,
+      "tier": "A-Tier",
+      "rol": "Fast mana",
+      "gc": true,
+      "cmc": 0,
+      "type_line": "Artifact",
+      "components": {
+        "wir": 8.0,
+        "pir": 7.5,
+        "tsc": 9.0,
+        "syn": 7.0,
+        "flx": 8.0
+      },
+      "price_usd": 147.0
+    }
+  ],
+  "bottom_10": [
+    {
+      "name": "Redirect Lightning",
+      "cer": 3.0,
+      "tier": "D-Tier",
+      "rol": "Removal muy situacional",
+      "gc": false,
+      "cmc": 2,
+      "type_line": "Instant",
+      "note": "Sin impacto en el plan principal",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.0,
+        "syn": 3.0,
+        "flx": 3.0
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Dead/Gone",
+      "cer": 3.0,
+      "tier": "D-Tier",
+      "rol": "Removal b\u00e1sico reemplazable",
+      "gc": false,
+      "cmc": 1,
+      "type_line": "Instant",
+      "note": "Chaos Warp lo supera en flexibilidad",
+      "components": {
+        "wir": 3.0,
+        "pir": 3.0,
+        "tsc": 3.2,
+        "syn": 2.8,
+        "flx": 3.0
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Untimely Malfunction",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Removal lento",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Instant",
+      "note": "Sin impacto relevante",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.1
+    },
+    {
+      "name": "Siege Smash",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Attack buff situacional",
+      "gc": false,
+      "cmc": 3,
+      "type_line": "Sorcery",
+      "note": "No aplica en el plan combo",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.1
+    },
+    {
+      "name": "Blighted Gorge",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Land / utility m\u00ednima",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped, da\u00f1o insignificante",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.2
+    },
+    {
+      "name": "Ash Barrens",
+      "cer": 2.5,
+      "tier": "F-Tier",
+      "rol": "Fetch b\u00e1sico irrelevante en Mono-R",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Solo fetchea Mountains \u2014 innecesario",
+      "components": {
+        "wir": 2.5,
+        "pir": 2.5,
+        "tsc": 2.5,
+        "syn": 2.5,
+        "flx": 2.5
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Smoldering Crater",
+      "cer": 2.0,
+      "tier": "F-Tier",
+      "rol": "Entra tapped, draw muy caro",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped + 3 mana = draw 1",
+      "components": {
+        "wir": 2.0,
+        "pir": 2.0,
+        "tsc": 2.0,
+        "syn": 2.0,
+        "flx": 2.0
+      },
+      "price_usd": 0.1
+    },
+    {
+      "name": "Ghost Quarter",
+      "cer": 2.0,
+      "tier": "F-Tier",
+      "rol": "LD sin combo que lo justifique",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Sin sinergia real en el deck",
+      "components": {
+        "wir": 2.0,
+        "pir": 2.0,
+        "tsc": 2.0,
+        "syn": 2.0,
+        "flx": 2.5
+      },
+      "price_usd": 1.0
+    },
+    {
+      "name": "Rogue's Passage",
+      "cer": 1.8,
+      "tier": "F-Tier",
+      "rol": "Unblockable irrelevante",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Plan es combo, no ataque",
+      "components": {
+        "wir": 1.8,
+        "pir": 1.8,
+        "tsc": 1.8,
+        "syn": 1.8,
+        "flx": 2.0
+      },
+      "price_usd": 0.5
+    },
+    {
+      "name": "Volatile Fault",
+      "cer": 1.5,
+      "tier": "F-Tier",
+      "rol": "LD m\u00ednima / entra tapped",
+      "gc": false,
+      "cmc": 0,
+      "type_line": "Land",
+      "note": "Entra tapped y efecto marginal",
+      "components": {
+        "wir": 1.5,
+        "pir": 1.5,
+        "tsc": 1.5,
+        "syn": 1.5,
+        "flx": 1.5
+      },
+      "price_usd": 0.2
+    }
+  ],
+  "bps": {
+    "from_bracket": 4,
+    "to_bracket": 5,
+    "score": 30.0,
+    "note": "GC Density recalculada con lista real feb 2026: 6 GCs reales (no 7)"
+  }
+}
