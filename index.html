@@ -711,74 +711,83 @@ async function fetchScryfall(names) {
 // ═══════════════════════════════════════════════════════════
 //  COMMANDER SPELLBOOK
 // ═══════════════════════════════════════════════════════════
-async function fetchCombos(cardNames, commander) {                                                                                                                            
-    const commanders = commander.split(' // ').map(s => s.trim()).filter(Boolean);                                                                                              
-    const cmdSet = new Set(commanders.map(c => c.toLowerCase()));                                                                                                               
-    const main = cardNames.filter(n => !cmdSet.has(n.toLowerCase()));                                                                                                           
-                                                                                                                                                                                
-    const SPELLBOOK = 'https://backend.commanderspellbook.com/find-my-combos?limit=200';                                                                                        
-    const body = JSON.stringify({                                                                                                                                             
-      main: main.map(n => ({ card: n })),                                                                                                                                       
-      commanders: commanders.map(n => ({ card: n })),                                                                                                                         
-    });                                                                                                                                                                         
-  
-    const attempts = [                                                                                                                                                          
-      () => fetch(SPELLBOOK, {                                                                                                                                                
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
-        body,                                                                                                                                                                   
-        signal: AbortSignal.timeout(15000),
-      }),                                                                                                                                                                       
-      () => fetch('https://corsproxy.io/?' + encodeURIComponent(SPELLBOOK), {                                                                                                 
-        method: 'POST',                                                                                                                                                         
-        headers: { 'Content-Type':'application/json', 'Accept':'application/json', 'x-requested-with':'XMLHttpRequest' },
-        body,                                                                                                                                                                   
-        signal: AbortSignal.timeout(20000),                                                                                                                                     
-      }),
-    ];                                                                                                                                                                          
-                                                                                                                                                                              
-    for (const attempt of attempts) {
-      try {
-        const res = await attempt();
-        if (!res.ok) continue;
-        const raw = await res.json();
-        const result = processSpellbook(raw);                                                                                                                                   
-        if (result.included.length > 0 || result.summary.almost_included_count > 0) return result;
-      } catch (e) {                                                                                                                                                             
-        console.warn('[combos]', e.message);                                                                                                                                    
+
+// ═══════════════════════════════════════════════════════════
+//  COMBO DETECTION  —  edh-combos.com  (CORS-open GET API)
+// ═══════════════════════════════════════════════════════════
+function normalizeEdhCombo(combo, missingCard = null) {
+  return {
+    id:           combo.d,
+    card_names:   combo.c,
+    effects:      [combo.r],
+    description:  combo.r,
+    bracket_tag:  '?',
+    bracket_label:'Unknown',
+    popularity:   0,
+    mana_needed:  null,
+    missing_card: missingCard,
+  };
+}
+
+async function fetchCombos(cardNames, commander) {
+  const commanders = commander.split(' // ').map(s => s.trim()).filter(Boolean);
+  const allCards = new Set(
+    [...cardNames, ...commanders].map(n => n.toLowerCase().trim())
+  );
+
+  const EDH_COMBOS_BASE = 'https://edh-combos.com/api/search?s=';
+  const seen = new Map();   // combo.d -> combo (deduplicate)
+
+  // Batch requests so we don't open 99 connections at once
+  const BATCH = 12;
+  const cards = [...cardNames];
+  for (let i = 0; i < cards.length; i += BATCH) {
+    const batch = cards.slice(i, i + BATCH);
+    const results = await Promise.all(
+      batch.map(async name => {
+        try {
+          const res = await fetch(
+            EDH_COMBOS_BASE + encodeURIComponent(name),
+            { signal: AbortSignal.timeout(10000) }
+          );
+          if (!res.ok) return [];
+          return await res.json();
+        } catch (e) {
+          console.warn('[combos] fetch failed for', name, e.message);
+          return [];
+        }
+      })
+    );
+    for (const combos of results) {
+      if (!Array.isArray(combos)) continue;
+      for (const combo of combos) {
+        if (combo.d && !seen.has(combo.d)) seen.set(combo.d, combo);
       }
-    }                                                                                                                                                                           
-    return null;                                                                                                                                                              
+    }
   }
 
+  const included        = [];
+  const almost_included = [];
 
+  for (const combo of seen.values()) {
+    const comboCards = (combo.c || []).map(n => n.toLowerCase().trim());
+    const missing    = comboCards.filter(n => !allCards.has(n));
+    if (missing.length === 0) {
+      included.push(normalizeEdhCombo(combo));
+    } else if (missing.length === 1) {
+      almost_included.push(normalizeEdhCombo(combo, missing[0]));
+    }
+  }
 
-// ═══════════════════════════════════════════════════════════
-//  PROCESS SPELLBOOK RESPONSE
-// ═══════════════════════════════════════════════════════════
-const BRACKET_TAG = {
-  R: 'Ruthless (B4)', S: 'Spicy (B3-4)', P: 'Powerful (B3)',
-  O: 'Oddball', C: 'Core (B2)', E: 'Exhibition', B: 'Banned'
-};
+  if (included.length === 0 && almost_included.length === 0) return null;
 
-function processSpellbook(raw) {
-  const r = Array.isArray(raw.results) ? raw.results[0] : (raw.results || raw || {});
-  const normalizeVariant = v => ({
-    id: v.id,
-    card_names: (v.uses || []).map(u => u.card?.name || u.card || '?'),
-    effects: (v.produces || []).map(p => p.feature?.name || p.feature || '?'),
-    description: v.description || '',
-    bracket_tag: v.bracketTag || '?',
-    bracket_label: (BRACKET_TAG[v.bracketTag] || 'Unknown'),
-    popularity: v.popularity || 0,
-    mana_needed: v.manaNeeded || null,
-  });
-  const included = (r.included       || []).map(normalizeVariant);
-  const almost   = (r.almostIncluded || []).map(normalizeVariant);
   return {
-    summary: { included_count: included.length, almost_included_count: almost.length },
+    summary: {
+      included_count:        included.length,
+      almost_included_count: almost_included.length,
+    },
     included,
-    almost_included: almost,
+    almost_included,
   };
 }
 
