@@ -1476,7 +1476,20 @@ function resetFilters() {
 //  DOWNLOAD
 // ═══════════════════════════════════════════════════════════
 function downloadHTML() {
-  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  // Embed current state as JSON so the file auto-renders when opened offline
+  const saved = JSON.stringify({ report: state.report, combos: state.combos, commander: state.commander, bracket: state.bracket });
+  const injection = `<script>
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var s = ${saved};
+    state.report = s.report; state.combos = s.combos;
+    state.commander = s.commander; state.bracket = s.bracket;
+    switchPanel('panel-dashboard');
+    renderDashboard(s.report, s.combos);
+  } catch(e) { console.error('restore failed', e); }
+});
+\x3c/script>`;
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML.replace('</body>', injection + '\n</body>');
   const blob = new Blob([html], {type:'text/html'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
