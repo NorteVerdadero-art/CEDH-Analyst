@@ -881,25 +881,67 @@ function calculateCER(card, bracket) {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  WCI
+//  EDHREC SYNERGY
 // ═══════════════════════════════════════════════════════════
-function calculateWCI(cards, combos) {
-  const included = (combos?.included || []);
-  const top3 = [...included].sort((a,b) => b.popularity - a.popularity).slice(0,3);
-  const comboSets = top3.map(c => new Set(c.card_names.map(n => n.toLowerCase())));
+async function fetchEDHRECSynergy(commanderName) {
+  try {
+    const base = commanderName.split(' // ')[0].trim();
+    const slug = base.toLowerCase().replace(/,/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+    const url = `https://json.edhrec.com/pages/commanders/${slug}.json`;
+    // Try direct first, then allorigins proxy
+    for (const ep of [url, `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`]) {
+      try {
+        const res = await fetch(ep, { signal: AbortSignal.timeout(8000) });
+        if (!res.ok) continue;
+        const data = await res.json();
+        const map = {};
+        for (const cl of (data?.container?.json_dict?.cardlists || [])) {
+          for (const entry of (cl.cardviews || [])) {
+            if (entry.name && entry.synergy != null) map[entry.name.toLowerCase()] = +entry.synergy;
+          }
+        }
+        if (Object.keys(map).length) return map;
+      } catch {}
+    }
+  } catch(e) { console.warn('[edhrec]', e); }
+  return {};
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WCI  (50% combo log-weighted + 30% EDHREC synergy + 20% enabler)
+// ═══════════════════════════════════════════════════════════
+function calculateWCI(cards, combos, edhrec = {}) {
+  const included = combos?.included || [];
+
+  // Log-weighted combo presence map
+  const totalW = included.reduce((s,c) => s + Math.log1p(c.popularity || 0), 0);
+  const comboW = {};
+  included.forEach(combo => {
+    const w = Math.log1p(combo.popularity || 0);
+    (combo.card_names || []).forEach(n => { const k=n.toLowerCase(); comboW[k]=(comboW[k]||0)+w; });
+  });
 
   return cards.map(card => {
-    const nl = (card.name||'').toLowerCase();
+    const nl   = (card.name||'').toLowerCase();
     const oracle = (card.oracle_text||'').toLowerCase();
-    const type = (card.type_line||'').toLowerCase();
-    const direct = comboSets.reduce((s,set) => s + (set.has(nl) ? 1 : 0), 0) / Math.max(comboSets.length, 1);
+    const type   = (card.type_line||'').toLowerCase();
+
+    // C1: combo score (50%)
+    const comboScore = totalW > 0 ? Math.min(1, (comboW[nl]||0) / totalW) : 0;
+
+    // C2: EDHREC synergy (30%) — [-1,1]→[0,1]; 0.5 neutral if absent
+    const rawSyn = edhrec[nl];
+    const synScore = rawSyn != null ? (rawSyn + 1) / 2 : 0.5;
+
+    // C3: enabler (20%)
     let enabler = 0;
-    if (oracle.includes('search your library')) enabler = Math.max(enabler, 0.80);
+    if (oracle.includes('search your library'))                         enabler = Math.max(enabler, 0.80);
     if (FAST_MANA.has(nl) || (card.cmc===0 && type.includes('artifact'))) enabler = Math.max(enabler, 0.65);
-    if (card.gc) enabler = Math.max(enabler, 0.55);
+    if (card.gc)                                                         enabler = Math.max(enabler, 0.55);
     if (card.cmc<=2 && type.includes('artifact') && oracle.includes('add')) enabler = Math.max(enabler, 0.45);
-    if (card.cer > 0) enabler = Math.max(enabler, card.cer/10);
-    return { ...card, wci: +Math.min(100, (direct*0.70 + enabler*0.30)*100).toFixed(1) };
+    if (card.cer > 0) enabler = Math.max(enabler, card.cer / 10);
+
+    return { ...card, wci: +Math.min(100, (comboScore*0.50 + synScore*0.30 + enabler*0.20)*100).toFixed(1) };
   });
 }
 
@@ -1053,7 +1095,7 @@ async function startAnalysis() {
   const sfMap = await fetchScryfall(names);
   const enriched = cardObjs.map(card => {
     const sf = sfMap[card.name.toLowerCase()];
-    if (!sf) return { ...card, cmc:0, type_line:'', oracle_text:'', color_identity:[], edhrec_rank:null };
+    if (!sf) return { ...card, cmc:0, type_line:'', oracle_text:'', color_identity:[], edhrec_rank:null, image_uri:'' };
     return {
       ...card,
       name: sf.name, // use canonical Scryfall name
@@ -1062,6 +1104,7 @@ async function startAnalysis() {
       oracle_text: sf.oracle_text || '',
       color_identity: sf.color_identity || [],
       edhrec_rank: sf.edhrec_rank || null,
+      image_uri: (sf.image_uris?.normal) || (sf.card_faces?.[0]?.image_uris?.normal) || '',
     };
   });
   const found = enriched.filter(c => sfMap[c.name.toLowerCase()]).length;
@@ -1079,6 +1122,13 @@ async function startAnalysis() {
     setStep('s-combos','skip', 'Combos — no disponibles (CORS o sin comandante)');
   }
 
+  // Step 3.5: EDHREC synergy
+  let edhrecSynergy = {};
+  if (commander) {
+    setStep('s-calc','spin');
+    edhrecSynergy = await fetchEDHRECSynergy(commander);
+  }
+
   // Step 4: Calculate
   setStep('s-calc','spin');
   await sleep(50);
@@ -1088,7 +1138,7 @@ async function startAnalysis() {
     return { ...card, ...result };
   });
   // WCI
-  const withWCI = calculateWCI(scored, combos);
+  const withWCI = calculateWCI(scored, combos, edhrecSynergy);
   // Win curve
   const winCurve = calculateWinCurve(withWCI, combos);
   // BPS
@@ -1152,7 +1202,7 @@ function renderDashboard(report, combos) {
     { val: (td['S-Tier']||0)+(td['A-Tier']||0), lbl:'S/A Tier' },
     { val: gcs,                lbl:'Game Changers' },
     { val: cs.included_count,  lbl:'Combos' },
-    { val: t50 ? 'T'+t50 : '—', lbl:'Turno de Victoria Est.' },
+    { val: t50 ? 'T'+t50 : '—', lbl:'Puede ganar desde' },
     { val: bps.bps_pct+'%',    lbl:`BPS → B${bps.target_bracket}` },
   ];
   document.getElementById('d-kpis').innerHTML = kpis.map(k =>
@@ -1307,7 +1357,7 @@ function renderCombos(combos) {
 
   const rows = combos.included.map(c => {
     const color = TAG_COLORS[c.bracket_tag] || '#90A4AE';
-    const cards = c.card_names.join(' + ');
+    const cards = c.card_names.map(n => `<span data-img="https://api.scryfall.com/cards/named?exact=${encodeURIComponent(n)}&format=image&version=normal">${n}</span>`).join(' + ');
     const effects = c.effects.slice(0,3).join(', ');
     const desc = c.description.slice(0,200) + (c.description.length>200?'…':'');
     return `
@@ -1321,7 +1371,7 @@ function renderCombos(combos) {
   }).join('');
 
   const almost = combos.almost_included?.slice(0,5).map(c =>
-    `<tr><td style="font-weight:600;color:var(--blue)">${c.card_names.join(' + ')}</td><td style="color:var(--muted);font-size:.85rem">${c.effects.slice(0,2).join(', ')}</td></tr>`
+    `<tr><td style="font-weight:600;color:var(--blue)">${c.card_names.map(n=>`<span data-img="https://api.scryfall.com/cards/named?exact=${encodeURIComponent(n)}&format=image&version=normal">${n}</span>`).join(' + ')}</td><td style="color:var(--muted);font-size:.85rem">${c.effects.slice(0,2).join(', ')}</td></tr>`
   ).join('') || '';
 
   const almostSection = combos.almost_included?.length ? `
@@ -1362,7 +1412,7 @@ function renderCardTable(cards) {
     ].map(([cls,lbl,url])=>`<a href="${url}" target="_blank" rel="noopener" class="buy-link ${cls}">${lbl}</a>`).join('');
 
     return `<tr data-cer="${card.cer}" data-name="${card.name.toLowerCase()}" data-tier="${tc}" data-type="${type.toLowerCase()}" data-gc="${card.gc?'1':'0'}" data-cmc="${card.cmc||0}">
-  <td class="card-name">${card.name}${gcBadge}${banBadge}</td>
+  <td class="card-name"${card.image_uri ? ` data-img="${card.image_uri}"` : ''}>${card.name}${gcBadge}${banBadge}</td>
   <td style="text-align:center"><span class="cer-badge ${tc}">${card.cer.toFixed(2)}</span></td>
   <td style="text-align:center"><span class="tier-tag ${tc}">${card.tier}</span></td>
   <td style="text-align:center;color:var(--muted);font-size:.82rem">${card.cmc??0}</td>
@@ -1445,6 +1495,29 @@ function resetApp() {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+
+<style>
+#card-img-tooltip{position:fixed;pointer-events:none;z-index:9999;display:none;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.35);overflow:hidden;width:250px;border:1px solid #dde2ea;background:#000}
+#card-img-tooltip img{width:250px;display:block}
+</style>
+<div id="card-img-tooltip"><img id="card-img-tooltip-img" src="" alt=""></div>
+<script>
+(function(){
+  var tip=document.getElementById('card-img-tooltip'),tipImg=document.getElementById('card-img-tooltip-img');
+  function show(e){var s=this.getAttribute('data-img');if(!s)return;tipImg.src=s;tip.style.display='block';move(e);}
+  function move(e){var x=e.clientX+16,y=e.clientY+16,tw=252,th=tip.offsetHeight||350;
+    if(x+tw>window.innerWidth)x=e.clientX-tw-16;if(y+th>window.innerHeight)y=window.innerHeight-th-16;
+    tip.style.left=Math.max(0,x)+'px';tip.style.top=Math.max(0,y)+'px';}
+  function hide(){tip.style.display='none';tipImg.src='';}
+  function attach(){document.querySelectorAll('[data-img]').forEach(function(el){el.addEventListener('mouseover',show);el.addEventListener('mousemove',move);el.addEventListener('mouseout',hide);});}
+  document.addEventListener('DOMContentLoaded',attach);
+  // Re-attach after dynamic renders
+  var _origT=window.renderCardTable;
+  if(typeof _origT==='function')window.renderCardTable=function(){_origT.apply(this,arguments);attach();};
+  var _origC=window.renderCombos;
+  if(typeof _origC==='function')window.renderCombos=function(){var r=_origC.apply(this,arguments);setTimeout(attach,50);return r;};
+})();
 </script>
 </body>
 </html>
