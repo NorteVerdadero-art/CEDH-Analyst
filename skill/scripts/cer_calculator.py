@@ -21,24 +21,37 @@ import sys
 import argparse
 import math
 
-# Game Changers that restrict bracket placement
+# Game Changers — lista oficial vigente (abril 2026)
+# Fuentes: magic.wizards.com anuncios Feb 2025, Abr 2025, Oct 2025, Feb 2026
 GAME_CHANGERS = {
-    # Fast Mana
-    "Mana Crypt", "Mana Vault", "Grim Monolith", "Mox Diamond",
-    "Chrome Mox", "Gaea's Cradle", "Serra's Sanctum", "Mishra's Workshop",
-    # Tutors
-    "Demonic Tutor", "Vampiric Tutor", "Imperial Seal", "Mystical Tutor",
-    "Enlightened Tutor", "Worldly Tutor", "Gamble",
-    # Card Advantage
-    "Rhystic Study", "Necropotence", "Smothering Tithe", "Mystic Remora",
-    "Sylvan Library", "The One Ring", "Ad Nauseam",
-    # Wincons
-    "Thassa's Oracle", "Underworld Breach", "Doomsday",
-    # Interaction
-    "Cyclonic Rift", "Force of Will", "Fierce Guardianship", "Mana Drain",
-    # Stax
-    "Drannith Magistrate", "Opposition Agent", "Tergrid, God of Fright",
+    # White
+    "Drannith Magistrate", "Enlightened Tutor", "Serra's Sanctum",
+    "Smothering Tithe", "Teferi's Protection",
+    # Blue
+    "Cyclonic Rift", "Force of Will", "Fierce Guardianship", "Rhystic Study",
+    "Thassa's Oracle", "Mystical Tutor", "Intuition", "Consecrated Sphinx",
     "Narset, Parter of Veils", "Notion Thief",
+    # Black
+    "Bolas's Citadel", "Demonic Tutor", "Imperial Seal", "Opposition Agent",
+    "Tergrid, God of Fright", "Vampiric Tutor", "Ad Nauseam",
+    # Red
+    "Jeska's Will", "Underworld Breach",
+    # Green
+    "Survival of the Fittest", "Gaea's Cradle", "Natural Order",
+    "Crop Rotation", "Aura Shards", "Seedborn Muse", "Field of the Dead",
+    # Multicolor
+    "Grand Arbiter Augustin IV", "Orcish Bowmasters",
+    # Colorless / Lands
+    "Ancient Tomb", "Chrome Mox", "The One Ring", "The Tabernacle at Pendrell Vale",
+    "Grim Monolith", "Lion's Eye Diamond", "Mox Diamond", "Mana Vault",
+    "Glacial Chasm", "Mishra's Workshop",
+    # Added via unban (Apr 2025)
+    "Braids, Cabal Minion", "Coalition Victory", "Gifts Ungiven",
+    "Panoptic Mirror",
+    # Added individually
+    "Humility", "Gamble", "Worldly Tutor",
+    # Feb 2026
+    "Farewell", "Biorhythm",
 }
 
 # Bracket descriptions for Turn Speed Contribution baseline

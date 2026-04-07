@@ -28,10 +28,12 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
     tier_dist = data.get("tier_distribution", {})
     avg_cer = data.get("avg_cer", 0)
     total_cards = data.get("total_cards", 0)
-    est_price = data.get("estimated_price_usd", 0)
     gc_count = data.get("game_changers_count", 0)
-    top10 = data.get("top_10", [])[:10]
-    bottom10 = data.get("bottom_10", [])[-10:]
+    win_curve = data.get("win_curve", [])
+    # Only show cards with CER > 0 in ranked tables
+    scored_cards = [c for c in all_cards if c.get("cer", 0) > 0]
+    top10 = sorted(scored_cards, key=lambda c: c.get("cer", 0), reverse=True)[:10]
+    bottom10 = sorted(scored_cards, key=lambda c: c.get("cer", 0))[:10]
     
     # --- Prepare chart data ---
     
@@ -70,22 +72,27 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
     cmc_labels = json.dumps(["0", "1", "2", "3", "4", "5", "6", "7+"])
     cmc_values = json.dumps([cmc_dist.get(k, 0) for k in ["0", "1", "2", "3", "4", "5", "6", "7+"]])
     
-    # 4. CER vs Price scatter
-    scatter_data = []
-    for c in all_cards:
-        price = 0
-        try:
-            price = float(c.get("price_usd") or 0)
-        except (ValueError, TypeError):
-            price = 0
-        scatter_data.append({
-            "x": round(price, 2),
-            "y": c.get("cer", 0),
-            "label": c.get("name", "?")
-        })
-    scatter_json = json.dumps(scatter_data)
-    
-    # 5. Top 10 radar data (components breakdown) — only if any card has non-zero components
+    # 4. WCI top cards horizontal bar
+    wci_cards = sorted([c for c in all_cards if c.get("wci", 0) > 0],
+                       key=lambda c: c.get("wci", 0), reverse=True)[:20]
+    wci_labels = json.dumps([c["name"] for c in wci_cards])
+    wci_values = json.dumps([c["wci"] for c in wci_cards])
+
+    # 5. Win probability curve (turns 1-10)
+    win_curve_turn_labels = json.dumps([f"T{i}" for i in range(1, len(win_curve) + 1)] if win_curve else [f"T{i}" for i in range(1, 11)])
+    win_curve_values_json = json.dumps(win_curve)
+
+    # KPI: combo count
+    combos_summary = data.get("combos_summary", {})
+    combo_count_kpi = combos_summary.get("included", 0)
+    # Win turn estimate: first turn where P(win) >= 50%, or "—"
+    win_turn_est = "—"
+    for idx, pwin in enumerate(win_curve):
+        if pwin >= 50:
+            win_turn_est = str(idx + 1)
+            break
+
+    # 6. Top 10 radar data (components breakdown) — only if any card has non-zero components
     radar_cards = top10[:6]
     radar_palette = ["#1565C0", "#1976D2", "#455A64", "#78909C", "#90A4AE", "#B0BEC5"]
     has_components = any(
@@ -132,32 +139,33 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
     type_bg = json.dumps([type_colors_list.get(k, "#666") for k, v in type_dist.items() if v > 0])
     
     # Build top/bottom tables
-    def build_table_rows(cards, show_note=False):
+    def build_table_rows(cards):
         rows = ""
         for i, c in enumerate(cards):
             tier = c.get("tier", "?")
             tier_class = tier.lower().replace("-", "").replace(" ", "")
             cer = c.get("cer", 0)
-            price = c.get("price_usd") or "—"
+            wci = c.get("wci", 0)
             name = html_module.escape(c.get("name", "?"))
-            note = html_module.escape(c.get("note", "")) if show_note else ""
+            gc_badge = ' <span style="font-size:0.7rem;color:#1565C0;font-weight:700;">GC</span>' if c.get("gc") else ""
             comp_cell = ""
             if has_components:
                 comp = c.get("components", {})
                 comp_cell = f'<td class="components">{comp.get("wir","—")}/{comp.get("pir","—")}/{comp.get("tsc","—")}/{comp.get("syn","—")}/{comp.get("flx","—")}</td>'
+            img_uri = html_module.escape(c.get("image_uri", ""))
+            img_attr = f' data-img="{img_uri}"' if img_uri else ""
             rows += f"""<tr>
                 <td>{i+1}</td>
-                <td class="card-name">{name}</td>
+                <td class="card-name"{img_attr}>{name}{gc_badge}</td>
                 <td><span class="cer-badge {tier_class}">{cer:.2f}</span></td>
                 <td><span class="tier-tag {tier_class}">{tier}</span></td>
-                <td>${price}</td>
+                <td style="font-size:0.85rem;color:#455A64;">{wci:.0f}%</td>
                 {comp_cell}
-                {f'<td class="note">{note}</td>' if show_note else ''}
             </tr>"""
         return rows
 
     top_rows = build_table_rows(top10)
-    bottom_rows = build_table_rows(bottom10, show_note=True)
+    bottom_rows = build_table_rows(bottom10)
     
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     
@@ -459,8 +467,12 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
       <div class="label">Game Changers</div>
     </div>
     <div class="kpi-card accent">
-      <div class="value">${est_price:,.0f}</div>
-      <div class="label">Precio Estimado USD</div>
+      <div class="value">{combo_count_kpi}</div>
+      <div class="label">Combos Detectados</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="value">{'T' + win_turn_est if win_turn_est != '—' else win_turn_est}</div>
+      <div class="label">Puede ganar desde</div>
     </div>
   </div>
   
@@ -483,8 +495,12 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
       <canvas id="typeChart"></canvas>
     </div>
     <div class="chart-card wide">
-      <h3>CER vs. Precio USD — Value Map</h3>
-      <canvas id="scatterChart"></canvas>
+      <h3>Win Contribution Index — Top 20 Cartas</h3>
+      <canvas id="wciChart"></canvas>
+    </div>
+    <div class="chart-card wide">
+      <h3>Probabilidad de Victoria por Turno</h3>
+      <canvas id="winCurveChart"></canvas>
     </div>
     {'<div class="chart-card wide"><h3>Componentes CER — Top Cartas (Radar)</h3><canvas id="radarChart"></canvas></div>' if has_components else ''}
   </div>
@@ -495,7 +511,7 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
     <table>
       <thead>
         <tr>
-          <th>#</th><th>Carta</th><th>CER</th><th>Tier</th><th>Precio</th>{'<th>WIR/PIR/TSC/SYN/FLX</th>' if has_components else ''}
+          <th>#</th><th>Carta</th><th>CER</th><th>Tier</th><th>WCI</th>{'<th>WIR/PIR/TSC/SYN/FLX</th>' if has_components else ''}
         </tr>
       </thead>
       <tbody>{top_rows}</tbody>
@@ -508,7 +524,7 @@ def generate_html(data: dict, commander: str = "Deck", bracket_name: str = "") -
     <table>
       <thead>
         <tr>
-          <th>#</th><th>Carta</th><th>CER</th><th>Tier</th><th>Precio</th>{'<th>WIR/PIR/TSC/SYN/FLX</th>' if has_components else ''}<th>Nota</th>
+          <th>#</th><th>Carta</th><th>CER</th><th>Tier</th><th>WCI</th>{'<th>WIR/PIR/TSC/SYN/FLX</th>' if has_components else ''}
         </tr>
       </thead>
       <tbody>{bottom_rows}</tbody>
@@ -620,19 +636,58 @@ new Chart(document.getElementById('typeChart'), {{
   }}
 }});
 
-// 5. CER vs Price Scatter
-const scatterData = {scatter_json};
-new Chart(document.getElementById('scatterChart'), {{
-  type: 'scatter',
+// 5. WCI — Win Contribution Index horizontal bar
+new Chart(document.getElementById('wciChart'), {{
+  type: 'bar',
   data: {{
+    labels: {wci_labels},
     datasets: [{{
-      label: 'Cartas',
-      data: scatterData,
-      backgroundColor: '#1565C044',
+      label: 'WCI %',
+      data: {wci_values},
+      backgroundColor: (ctx) => {{
+        const v = ctx.raw;
+        if (v >= 70) return '#1565C0';
+        if (v >= 40) return '#1976D2';
+        if (v >= 20) return '#455A64';
+        return '#90A4AE';
+      }},
+      borderRadius: 4,
+      borderSkipped: false
+    }}]
+  }},
+  options: {{
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {{
+      legend: {{ display: false }},
+      tooltip: {{
+        callbacks: {{
+          label: (ctx) => ` WCI: ${{ctx.raw.toFixed(1)}}%`
+        }}
+      }}
+    }},
+    scales: {{
+      x: {{ beginAtZero: true, max: 100, title: {{ display: true, text: 'Win Contribution Index (%)' }} }},
+      y: {{ grid: {{ display: false }}, ticks: {{ font: {{ size: 11 }} }} }}
+    }}
+  }}
+}});
+
+// 6. Win Probability by Turn
+new Chart(document.getElementById('winCurveChart'), {{
+  type: 'line',
+  data: {{
+    labels: {win_curve_turn_labels},
+    datasets: [{{
+      label: 'P(Victoria) %',
+      data: {win_curve_values_json},
       borderColor: '#1565C0',
-      borderWidth: 1,
-      pointRadius: 5,
-      pointHoverRadius: 8
+      backgroundColor: '#1565C022',
+      borderWidth: 2.5,
+      pointRadius: 4,
+      pointBackgroundColor: '#1565C0',
+      fill: true,
+      tension: 0.35
     }}]
   }},
   options: {{
@@ -641,16 +696,14 @@ new Chart(document.getElementById('scatterChart'), {{
       legend: {{ display: false }},
       tooltip: {{
         callbacks: {{
-          label: (ctx) => {{
-            const pt = scatterData[ctx.dataIndex];
-            return pt.label + ' — CER: ' + pt.y.toFixed(2) + ' · $' + pt.x.toFixed(2);
-          }}
+          label: (ctx) => ` P(win) = ${{ctx.raw.toFixed(1)}}%`
         }}
       }}
     }},
     scales: {{
-      x: {{ title: {{ display: true, text: 'Precio USD' }}, beginAtZero: true }},
-      y: {{ title: {{ display: true, text: 'CER Score' }}, min: 0, max: 10 }}
+      y: {{ beginAtZero: true, max: 100, title: {{ display: true, text: 'Probabilidad (%)' }},
+             ticks: {{ callback: (v) => v + '%' }} }},
+      x: {{ grid: {{ display: false }}, title: {{ display: true, text: 'Turno' }} }}
     }}
   }}
 }});
@@ -681,6 +734,50 @@ if (document.getElementById('radarChart')) {{
     }}
   }});
 }}
+</script>
+
+<style>
+#card-img-tooltip {{
+  position: fixed; pointer-events: none; z-index: 9999; display: none;
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  overflow: hidden; width: 250px; border: 1px solid var(--border);
+  background: #000;
+}}
+#card-img-tooltip img {{ width: 250px; display: block; }}
+</style>
+
+<div id="card-img-tooltip"><img id="card-img-tooltip-img" src="" alt=""></div>
+<script>
+(function() {{
+  var tip = document.getElementById('card-img-tooltip');
+  var tipImg = document.getElementById('card-img-tooltip-img');
+  function show(e) {{
+    var src = this.getAttribute('data-img');
+    if (!src) return;
+    tipImg.src = src;
+    tip.style.display = 'block';
+    move(e);
+  }}
+  function move(e) {{
+    var x = e.clientX + 16, y = e.clientY + 16;
+    var tw = 252, th = tip.offsetHeight || 350;
+    if (x + tw > window.innerWidth)  x = e.clientX - tw - 16;
+    if (y + th > window.innerHeight) y = window.innerHeight - th - 16;
+    tip.style.left = Math.max(0, x) + 'px';
+    tip.style.top  = Math.max(0, y) + 'px';
+  }}
+  function hide() {{ tip.style.display = 'none'; tipImg.src = ''; }}
+  function attach() {{
+    document.querySelectorAll('[data-img]').forEach(function(el) {{
+      el.addEventListener('mouseover', show);
+      el.addEventListener('mousemove', move);
+      el.addEventListener('mouseout',  hide);
+    }});
+  }}
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', attach);
+  }} else {{ attach(); }}
+}})();
 </script>
 
 </body>

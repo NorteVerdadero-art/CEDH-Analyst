@@ -9,16 +9,52 @@ Quantitative analysis tool for MTG Commander decks. Scores cards via **CER (Card
 
 ## Quick Start
 
+### Desde un export de Moxfield (recomendado)
 ```bash
-# Analyze a deck from a plain-text decklist
+# 1. En Moxfield: File → Export → Text  (o descarga desde el link del error)
+# 2. Analiza con precios de Scryfall (TCGPlayer, precisos, sin IDs requeridos)
 python3 cedh_analyst.py analyze \
-  --decklist decklist.txt \
+  --decklist magda.txt \
+  --commander "Magda, Brazen Outlaw" \
+  --bracket 4 \
+  --scryfall-prices \
+  --output ./output/
+
+open output/dashboard.html
+```
+
+### Intento directo con URL de Moxfield
+```bash
+# Funciona si Moxfield no bloquea la request; si falla, da instrucciones
+python3 cedh_analyst.py analyze \
+  --moxfield "https://www.moxfield.com/decks/TuDeckId" \
+  --bracket 4 \
+  --output ./output/
+```
+
+### Desde archivo local (JSON interno)
+```bash
+python3 cedh_analyst.py analyze \
+  --decklist data/deck_cards.json \
   --commander "Magda, Brazen Outlaw" \
   --bracket 4 \
   --output ./output/
+```
 
-# Open the generated dashboard
-open output/dashboard.html
+### Re-generar dashboard sin re-fetchear (usa caché)
+```bash
+# prices.json y combos.json ya existen en ./output/ → los carga automáticamente
+python3 cedh_analyst.py analyze \
+  --decklist magda.txt \
+  --commander "Magda, Brazen Outlaw" \
+  --bracket 4
+
+# Forzar re-fetch de todo
+python3 cedh_analyst.py analyze \
+  --decklist magda.txt \
+  --commander "Magda, Brazen Outlaw" \
+  --bracket 4 \
+  --refresh
 ```
 
 ## Accepted Input Formats
@@ -46,13 +82,27 @@ Pre-scored deck with `name`, `printId`, `cer`, `tier`, `gc`, `cmc`, `type_line` 
 
 ```
 python3 cedh_analyst.py analyze
-  --decklist  PATH   .txt / .csv / .json decklist (required)
-  --commander NAME   Commander name, e.g. "Magda, Brazen Outlaw" (required)
+  # Input (uno de los dos es requerido):
+  --moxfield  URL    URL de un deck público en Moxfield
+  --decklist  PATH   .txt / .csv / .json decklist
+
+  # Opciones:
+  --commander NAME   Comandante (auto-detectado desde Moxfield si no se especifica)
   --bracket   1-5    Power bracket (default: 4)
   --output    DIR    Output directory (default: ./output/)
-  --no-prices        Skip MTGStocks price fetch
-  --no-combos        Skip Commander Spellbook combo fetch
+  --scryfall-prices  Usa Scryfall (TCGPlayer) para precios — sin MTGStocks print IDs
+  --no-prices        Omite fetch de precios
+  --no-combos        Omite fetch de combos de Commander Spellbook
+  --refresh          Re-fetch precios y combos aunque exista caché
 ```
+
+### Fuentes de precios
+
+| Fuente | Cómo activarla | Precisión |
+|---|---|---|
+| **Scryfall** (recomendado) | `--scryfall-prices` | Alta — TCGPlayer actualizado diario |
+| **MTGStocks** (legado) | default si hay `prices.json` | Variable — depende de print IDs correctos |
+| **Moxfield API** | `--moxfield URL` | Alta — si no está bloqueado por Cloudflare |
 
 ## Output
 
