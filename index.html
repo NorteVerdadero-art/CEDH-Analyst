@@ -751,7 +751,7 @@ async function fetchCombos(cardNames, commander) {
             { signal: AbortSignal.timeout(10000) }
           );
           if (!res.ok) return [];
-          return await res.json();
+          const j = await res.json(); return Array.isArray(j) ? j : (j.combos || []);
         } catch (e) {
           console.warn('[combos] fetch failed for', name, e.message);
           return [];
