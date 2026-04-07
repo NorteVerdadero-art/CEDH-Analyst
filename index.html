@@ -711,49 +711,46 @@ async function fetchScryfall(names) {
 // ═══════════════════════════════════════════════════════════
 //  COMMANDER SPELLBOOK
 // ═══════════════════════════════════════════════════════════
-async function fetchCombos(cardNames, commander) {
-  const commanders = commander.split(' // ').map(s => s.trim()).filter(Boolean);
-  const cmdSet = new Set(commanders.map(c => c.toLowerCase()));
-  const main = cardNames.filter(n => !cmdSet.has(n.toLowerCase()));
-  try {
-    const res = await fetch('https://backend.commanderspellbook.com/find-my-combos?limit=200', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
-      body: JSON.stringify({
-        main: main.map(n => ({ card: n })),
-        commanders: commanders.map(n => ({ card: n })),
+async function fetchCombos(cardNames, commander) {                                                                                                                            
+    const commanders = commander.split(' // ').map(s => s.trim()).filter(Boolean);                                                                                              
+    const cmdSet = new Set(commanders.map(c => c.toLowerCase()));                                                                                                               
+    const main = cardNames.filter(n => !cmdSet.has(n.toLowerCase()));                                                                                                           
+                                                                                                                                                                                
+    const SPELLBOOK = 'https://backend.commanderspellbook.com/find-my-combos?limit=200';                                                                                        
+    const body = JSON.stringify({                                                                                                                                             
+      main: main.map(n => ({ card: n })),                                                                                                                                       
+      commanders: commanders.map(n => ({ card: n })),                                                                                                                         
+    });                                                                                                                                                                         
+  
+    const attempts = [                                                                                                                                                          
+      () => fetch(SPELLBOOK, {                                                                                                                                                
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+        body,                                                                                                                                                                   
+        signal: AbortSignal.timeout(15000),
+      }),                                                                                                                                                                       
+      () => fetch('https://corsproxy.io/?' + encodeURIComponent(SPELLBOOK), {                                                                                                 
+        method: 'POST',                                                                                                                                                         
+        headers: { 'Content-Type':'application/json', 'Accept':'application/json', 'x-requested-with':'XMLHttpRequest' },
+        body,                                                                                                                                                                   
+        signal: AbortSignal.timeout(20000),                                                                                                                                     
       }),
-      signal: AbortSignal.timeout(20000),
-    });
-    if (!res.ok) return null;
-    const raw = await res.json();
-    return processSpellbook(raw);
-  } catch { return null; }
-}
+    ];                                                                                                                                                                          
+                                                                                                                                                                              
+    for (const attempt of attempts) {
+      try {
+        const res = await attempt();
+        if (!res.ok) continue;
+        const raw = await res.json();
+        const result = processSpellbook(raw);                                                                                                                                   
+        if (result.included.length > 0 || result.summary.almost_included_count > 0) return result;
+      } catch (e) {                                                                                                                                                             
+        console.warn('[combos]', e.message);                                                                                                                                    
+      }
+    }                                                                                                                                                                           
+    return null;                                                                                                                                                              
+  }
 
-const ZONE_MAP = { B:'Battlefield', H:'Hand', G:'Graveyard', E:'Exile', L:'Library', C:'Command Zone' };
-const BRACKET_TAG = { R:'Ruthless (B4)', S:'Spicy (B3-4)', P:'Powerful (B3)', O:'Oddball', C:'Core (B2)', E:'Exhibition', B:'Banned' };
-
-function processSpellbook(raw) {
-  const r = Array.isArray(raw.results) ? raw.results[0] : (raw.results || {});
-  const normalizeVariant = v => ({
-    id: v.id,
-    card_names: (v.uses||[]).map(u => u.card?.name || '?'),
-    effects: (v.produces||[]).map(p => p.feature?.name || '?'),
-    description: v.description || '',
-    bracket_tag: v.bracketTag || '?',
-    bracket_label: BRACKET_TAG[v.bracketTag] || 'Unknown',
-    popularity: v.popularity || 0,
-    mana_needed: v.manaNeeded || null,
-  });
-  const included = (r.included || []).map(normalizeVariant);
-  const almost   = (r.almostIncluded || []).map(normalizeVariant);
-  return {
-    summary: { included_count: included.length, almost_included_count: almost.length },
-    included,
-    almost_included: almost,
-  };
-}
 
 // ═══════════════════════════════════════════════════════════
 //  CER CALCULATION
