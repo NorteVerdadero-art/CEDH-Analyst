@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cEDH Deck Analyst</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7fa; --card: #fff; --border: #dde2ea;
+  --text: #1a202c; --muted: #718096; --secondary: #4a5568;
+  --blue: #1565C0; --blue-l: #1E88E5; --green: #2E7D32;
+  --red: #C62828; --gold: #D4A017; --gray: #78909C;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+/* ── Layout ── */
+.panel { display:none; }
+.panel.active { display:block; }
+.container { max-width:1300px; margin:0 auto; padding:24px; }
+
+/* ── App header ── */
+.app-header {
+  text-align:center; padding:40px 24px 32px;
+  border-bottom:1px solid var(--border); margin-bottom:32px;
+}
+.app-header h1 { font-size:2rem; font-weight:700; letter-spacing:-.02em; }
+.app-header p { color:var(--muted); margin-top:6px; font-size:.9rem; }
+
+/* ── Input panel ── */
+.input-wrap { max-width:720px; margin:0 auto; }
+.tabs { display:flex; gap:0; margin-bottom:0; border:1px solid var(--border); border-bottom:none; border-radius:10px 10px 0 0; overflow:hidden; }
+.tab-btn { flex:1; padding:11px; background:var(--bg); border:none; font:inherit; font-size:.85rem; font-weight:600; color:var(--muted); cursor:pointer; transition:.15s; }
+.tab-btn.active { background:var(--card); color:var(--blue); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.input-box { background:var(--card); border:1px solid var(--border); border-radius:0 0 10px 10px; padding:20px; }
+textarea {
+  width:100%; height:200px; border:1px solid var(--border); border-radius:8px;
+  padding:12px; font:13px/1.6 'Inter',sans-serif; resize:vertical;
+  color:var(--text); background:#fafbfc;
+}
+textarea:focus { outline:none; border-color:var(--blue-l); }
+.upload-zone {
+  border:2px dashed var(--border); border-radius:8px; padding:40px 20px;
+  text-align:center; cursor:pointer; transition:.15s;
+  color:var(--muted); font-size:.9rem;
+}
+.upload-zone:hover, .upload-zone.drag { border-color:var(--blue-l); background:#f0f7ff; }
+.upload-zone input { display:none; }
+.url-row { display:flex; gap:8px; }
+.url-row input[type=text] {
+  flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:8px;
+  font:inherit; font-size:.9rem; color:var(--text);
+}
+.url-row input:focus { outline:none; border-color:var(--blue-l); }
+
+.meta-row { display:grid; grid-template-columns:1fr auto; gap:12px; margin-top:16px; }
+.meta-row input, .meta-row select {
+  padding:10px 14px; border:1px solid var(--border); border-radius:8px;
+  font:inherit; font-size:.9rem; color:var(--text); background:var(--card);
+}
+.meta-row input:focus, .meta-row select:focus { outline:none; border-color:var(--blue-l); }
+
+.btn-primary {
+  width:100%; margin-top:16px; padding:13px;
+  background:var(--blue); color:#fff; border:none; border-radius:8px;
+  font:inherit; font-size:.95rem; font-weight:600; cursor:pointer; transition:.15s;
+}
+.btn-primary:hover { background:var(--blue-l); }
+.btn-primary:disabled { background:#90A4AE; cursor:not-allowed; }
+
+.hint { font-size:.78rem; color:var(--muted); margin-top:8px; }
+.hint a { color:var(--blue-l); }
+.error-box { background:#FFEBEE; border:1px solid #FFCDD2; border-radius:8px; padding:14px 16px; margin-top:12px; font-size:.85rem; color:var(--red); white-space:pre-wrap; }
+
+/* ── Progress ── */
+.progress-wrap { max-width:480px; margin:80px auto; text-align:center; }
+.progress-wrap h2 { font-size:1.2rem; margin-bottom:24px; }
+.step-list { text-align:left; }
+.step { display:flex; align-items:center; gap:12px; padding:10px 0;
+        border-bottom:1px solid var(--border); font-size:.9rem; }
+.step:last-child { border-bottom:none; }
+.step-icon { width:24px; height:24px; border-radius:50%; display:flex; align-items:center;
+             justify-content:center; font-size:.75rem; flex-shrink:0; }
+.step-icon.wait  { background:#f0f0f0; color:var(--muted); }
+.step-icon.spin  { background:#E3F2FD; color:var(--blue); }
+.step-icon.done  { background:#E8F5E9; color:var(--green); }
+.step-icon.skip  { background:#f0f0f0; color:var(--muted); }
+.step-icon.err   { background:#FFEBEE; color:var(--red); }
+@keyframes spin { to { transform:rotate(360deg); } }
+.spinning { animation:spin .7s linear infinite; display:inline-block; }
+
+/* ── Dashboard ── */
+.dash-toolbar {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px; gap:12px; flex-wrap:wrap;
+}
+.btn-ghost {
+  padding:8px 16px; border:1px solid var(--border); border-radius:8px;
+  background:var(--card); font:inherit; font-size:.85rem; cursor:pointer;
+  color:var(--secondary); transition:.15s;
+}
+.btn-ghost:hover { border-color:var(--blue-l); color:var(--blue); }
+
+.dash-header { text-align:center; padding:40px 24px 32px; border-bottom:1px solid var(--border); margin-bottom:32px; position:relative; }
+.dash-header::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:160px; height:3px; background:linear-gradient(90deg,var(--blue),var(--gray)); border-radius:2px; }
+.dash-header h1 { font-size:2rem; font-weight:700; letter-spacing:-.02em; }
+.bracket-tag { display:inline-block; background:var(--blue); color:#fff; padding:4px 16px; border-radius:20px; font-size:.82rem; font-weight:600; margin-top:8px; }
+.dash-date { color:var(--muted); font-size:.75rem; margin-top:8px; }
+
+/* KPI */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:28px; }
+.kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; text-align:center; }
+.kpi-card .val { font-size:1.8rem; font-weight:700; color:var(--blue); font-variant-numeric:tabular-nums; }
+.kpi-card .lbl { color:var(--secondary); font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
+
+/* Charts */
+.chart-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin-bottom:28px; }
+@media(max-width:800px) { .chart-grid { grid-template-columns:1fr; } }
+.chart-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
+.chart-card h3 { font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--secondary); margin-bottom:14px; }
+.chart-card canvas { max-height:280px; }
+.chart-full { grid-column:1/-1; }
+
+/* Section card */
+.section-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:22px; }
+.section-card h3 { font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--secondary); margin-bottom:16px; }
+
+/* BPS */
+.bps-grid { display:grid; grid-template-columns:200px 1fr; gap:28px; align-items:start; }
+@media(max-width:600px) { .bps-grid { grid-template-columns:1fr; } }
+.dim-bar-label { display:flex; justify-content:space-between; font-size:.78rem; margin-bottom:4px; }
+.dim-bar-track { background:#f0f4f8; border-radius:4px; height:8px; overflow:hidden; margin-bottom:10px; }
+.dim-bar-fill { height:100%; border-radius:4px; transition:width .4s; }
+
+/* Tables */
+table { width:100%; border-collapse:collapse; font-size:.88rem; }
+th { text-align:left; padding:9px 11px; border-bottom:2px solid var(--border); color:var(--muted); font-weight:600; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; }
+td { padding:9px 11px; border-bottom:1px solid var(--border); }
+tr:hover td { background:#f8fafc; }
+.card-name { font-weight:600; }
+.cer-badge, .tier-tag { display:inline-block; padding:2px 9px; border-radius:5px; font-size:.78rem; font-weight:600; }
+.stier  { color:#1565C0; border:1px solid #1565C0; background:#E3F2FD; }
+.atier  { color:#1976D2; border:1px solid #1976D2; background:#E8F4FD; }
+.btier  { color:#455A64; border:1px solid #455A64; background:#ECEFF1; }
+.ctier  { color:#546E7A; border:1px solid #90A4AE; background:#F5F7F8; }
+.dtier  { color:#78909C; border:1px solid #B0BEC5; background:#FAFAFA; }
+.ftier  { color:#90A4AE; border:1px solid #CFD8DC; background:#FAFAFA; }
+.na     { color:#90A4AE; border:1px solid #CFD8DC; }
+.banned { color:#C62828; border:1px solid #C62828; background:#FFEBEE; }
+.gc-badge  { background:#E3F2FD; color:#1565C0; font-size:.63rem; font-weight:700; padding:1px 5px; border-radius:3px; vertical-align:middle; margin-left:4px; }
+.ban-badge { background:#FFEBEE; color:#C62828; font-size:.63rem; font-weight:700; padding:1px 5px; border-radius:3px; vertical-align:middle; margin-left:4px; }
+
+/* Filters */
+.filter-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center; }
+.filter-row input[type=text], .filter-row select {
+  padding:6px 11px; border:1px solid var(--border); border-radius:6px;
+  font:inherit; font-size:.82rem; color:var(--secondary); background:var(--card);
+}
+.filter-row input:focus, .filter-row select:focus { outline:none; border-color:var(--blue-l); }
+.filter-row label { font-size:.8rem; color:var(--secondary); display:flex; align-items:center; gap:4px; cursor:pointer; }
+#card-count { color:var(--muted); font-size:.78rem; }
+.btn-sm { padding:5px 12px; border:1px solid var(--border); border-radius:6px; background:var(--card); font:inherit; font-size:.78rem; cursor:pointer; color:var(--secondary); }
+.btn-sm:hover { border-color:var(--blue-l); color:var(--blue); }
+
+/* Buy links */
+.buy-link { display:inline-block; margin:1px 3px; padding:2px 8px; border-radius:4px; font-size:.7rem; font-weight:600; text-decoration:none; white-space:nowrap; border:1px solid; }
+.buy-link.tcg { color:#E3671A; border-color:#E3671A; }
+.buy-link.ck  { color:#1565C0; border-color:#1565C0; }
+.buy-link.mxn { color:#2E7D32; border-color:#2E7D32; }
+.buy-link:hover { opacity:.7; }
+
+/* Combo table */
+.combo-tag { font-weight:700; font-size:.82rem; }
+.combo-desc { color:var(--muted); font-size:.76rem; padding:2px 11px 10px; }
+
+/* Footer */
+.dash-footer { text-align:center; padding:28px; border-top:1px solid var(--border); color:var(--muted); font-size:.72rem; margin-top:24px; }
+.dash-footer a { color:var(--blue-l); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ INPUT PANEL ══════════════════ -->
+<div id="panel-input" class="panel active">
+<div class="container">
+  <div class="app-header">
+    <h1>cEDH Deck Analyst</h1>
+    <p>Análisis cuantitativo de decks Commander · CER · BPS · Combos · Bracket</p>
+  </div>
+
+  <div class="input-wrap">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('text')">Pegar lista</button>
+      <button class="tab-btn" onclick="switchTab('file')">Subir archivo</button>
+      <button class="tab-btn" onclick="switchTab('moxfield')">Moxfield URL</button>
+    </div>
+
+    <div class="input-box">
+      <!-- Tab: Paste text -->
+      <div id="tab-text" class="tab-content active">
+        <textarea id="deck-text" placeholder="1 Sol Ring&#10;1 Ancient Tomb&#10;1 Chrome Mox&#10;...&#10;&#10;Formatos: MTGO / MTGA / texto plano&#10;Cantidad opcional (ej: &quot;1 Sol Ring&quot; o solo &quot;Sol Ring&quot;)"></textarea>
+      </div>
+
+      <!-- Tab: File upload -->
+      <div id="tab-file" class="tab-content">
+        <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" accept=".txt,.csv" onchange="handleFile(this.files[0])">
+          <div style="font-size:2rem;margin-bottom:8px">📄</div>
+          <strong>Arrastra un archivo aquí</strong><br>
+          <span style="font-size:.82rem">o haz clic para seleccionar · .txt / .csv</span>
+          <div id="file-name" style="margin-top:10px;color:var(--blue);font-weight:600;font-size:.85rem"></div>
+        </div>
+        <p class="hint">CSV: necesita columna <code>name</code>, <code>Name</code> o <code>Card Name</code>. Exporta desde Moxfield → File → Export → CSV.</p>
+      </div>
+
+      <!-- Tab: Moxfield URL -->
+      <div id="tab-moxfield" class="tab-content">
+        <div class="url-row">
+          <input type="text" id="moxfield-url" placeholder="https://www.moxfield.com/decks/TuDeckId">
+          <button class="btn-ghost" onclick="loadMoxfield()">Cargar</button>
+        </div>
+        <div id="moxfield-status" style="margin-top:10px"></div>
+        <p class="hint" style="margin-top:8px">
+          Si Moxfield bloquea la request, exporta el deck en texto:<br>
+          <strong>File → Export → Text</strong> y pégalo en la pestaña "Pegar lista".
+        </p>
+      </div>
+
+      <!-- Commander + Bracket -->
+      <div class="meta-row">
+        <input type="text" id="commander-input" placeholder='Comandante (ej: Magda, Brazen Outlaw)'>
+        <select id="bracket-select">
+          <option value="1">B1 — Exhibition</option>
+          <option value="2">B2 — Core</option>
+          <option value="3">B3 — Upgraded</option>
+          <option value="4" selected>B4 — Optimized</option>
+          <option value="5">B5 — cEDH</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" id="analyze-btn" onclick="startAnalysis()">Analizar deck</button>
+      <div id="input-error" class="error-box" style="display:none"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ PROGRESS PANEL ══════════════════ -->
+<div id="panel-progress" class="panel">
+<div class="container">
+  <div class="progress-wrap">
+    <h2>Analizando deck…</h2>
+    <div class="step-list" id="step-list"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ DASHBOARD PANEL ══════════════════ -->
+<div id="panel-dashboard" class="panel">
+<div class="container">
+  <div class="dash-toolbar">
+    <button class="btn-ghost" onclick="resetApp()">← Analizar otro deck</button>
+    <button class="btn-ghost" onclick="downloadHTML()">Descargar reporte HTML</button>
+  </div>
+
+  <div class="dash-header">
+    <h1 id="d-commander">Commander</h1>
+    <span class="bracket-tag" id="d-bracket-tag">Bracket 4 — Optimized</span>
+    <div class="dash-date" id="d-date"></div>
+  </div>
+
+  <div class="kpi-grid" id="d-kpis"></div>
+
+  <div class="chart-grid">
+    <div class="chart-card"><h3>Distribución por Tier</h3><canvas id="c-tier"></canvas></div>
+    <div class="chart-card"><h3>Distribución de CER</h3><canvas id="c-cer"></canvas></div>
+    <div class="chart-card"><h3>Curva de Maná</h3><canvas id="c-mana"></canvas></div>
+    <div class="chart-card"><h3>Tipos de Carta</h3><canvas id="c-type"></canvas></div>
+    <div class="chart-card chart-full"><h3>Win Contribution Index — Top 20</h3><canvas id="c-wci"></canvas></div>
+    <div class="chart-card chart-full" id="c-wincurve-wrap"><h3>Probabilidad de Victoria por Turno</h3><canvas id="c-wincurve"></canvas></div>
+  </div>
+
+  <div id="d-bps"></div>
+  <div id="d-combos"></div>
+
+  <!-- Full card table -->
+  <div class="section-card">
+    <h3 id="card-table-title">Todas las Cartas</h3>
+    <div class="filter-row">
+      <input type="text" id="card-search" placeholder="Buscar carta…" oninput="filterCards()">
+      <select id="tier-filter" onchange="filterCards()">
+        <option value="">Todos los tiers</option>
+        <option value="stier">S-Tier</option>
+        <option value="atier">A-Tier</option>
+        <option value="btier">B-Tier</option>
+        <option value="ctier">C-Tier</option>
+        <option value="dtier">D-Tier</option>
+        <option value="ftier">F-Tier</option>
+        <option value="banned">Banned</option>
+      </select>
+      <select id="type-filter" onchange="filterCards()">
+        <option value="">Todos los tipos</option>
+        <option value="creature">Creature</option>
+        <option value="instant">Instant</option>
+        <option value="sorcery">Sorcery</option>
+        <option value="artifact">Artifact</option>
+        <option value="enchantment">Enchantment</option>
+        <option value="land">Land</option>
+      </select>
+      <label><input type="checkbox" id="gc-filter" onchange="filterCards()"> Solo GC</label>
+      <span id="card-count"></span>
+      <button class="btn-sm" onclick="resetFilters()" style="margin-left:auto">Limpiar</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="card-table">
+        <thead><tr>
+          <th style="cursor:pointer" onclick="sortCards('name')">Carta ⇅</th>
+          <th style="cursor:pointer;text-align:center" onclick="sortCards('cer')">CER ⇅</th>
+          <th style="text-align:center">Tier</th>
+          <th style="cursor:pointer;text-align:center" onclick="sortCards('cmc')">CMC ⇅</th>
+          <th>Tipo</th>
+          <th style="text-align:right">Comprar</th>
+        </tr></thead>
+        <tbody id="card-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    cEDH Deck Analyst · CER v1.0 ·
+    <a href="https://scryfall.com" target="_blank">Scryfall</a> ·
+    <a href="https://commanderspellbook.com" target="_blank">Commander Spellbook</a> ·
+    <a href="https://edhtop16.com" target="_blank">EDH Top 16</a>
+    <br><span style="font-size:.68rem;color:#a0aec0;margin-top:4px;display:inline-block">
+      Los datos anónimos de tu deck (comandante, cartas, CER, región) se guardan
+      para mejorar la herramienta. No se recopila información personal.
+    </span>
+  </div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  SUPABASE CONFIG
+//  1. Crea un proyecto en supabase.com (gratis)
+//  2. Ve a Settings → API y pega tu URL y anon key aquí
+//  3. Ejecuta el SQL de abajo en Supabase → SQL Editor
+// ═══════════════════════════════════════════════════════════
+/*
+  -- SQL para crear la tabla (pégalo en Supabase → SQL Editor → Run):
+
+  CREATE TABLE deck_analyses (
+    id            uuid        DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at    timestamptz DEFAULT now(),
+    commander     text,
+    bracket       int,
+    color_identity text,          -- ej: "R", "WUR", "WUBRG", "C" (incoloro)
+    total_cards   int,
+    avg_cer       numeric(5,2),
+    gc_count      int,
+    combo_count   int,
+    bps_pct       numeric(5,1),
+    win_turn_est  int,            -- primer turno con P(win) >= 50%, null si no aplica
+    tier_dist     jsonb,          -- {"S-Tier":5, "A-Tier":10, ...}
+    top_cards     text[],         -- top 10 cartas por CER
+    all_cards     text[],         -- todas las cartas del deck
+    region        text,           -- navigator.language, ej: "es-MX", "en-US"
+    source        text            -- "paste" | "file" | "moxfield"
+  );
+
+  -- Permitir inserts anónimos (sin auth):
+  ALTER TABLE deck_analyses ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "allow_public_insert"
+    ON deck_analyses FOR INSERT
+    WITH CHECK (true);
+
+  -- Vista rápida de analytics (opcional):
+  CREATE VIEW commander_stats AS
+  SELECT
+    commander,
+    color_identity,
+    COUNT(*)            AS total_analyses,
+    AVG(avg_cer)        AS avg_cer,
+    AVG(gc_count)       AS avg_gcs,
+    AVG(combo_count)    AS avg_combos,
+    AVG(bps_pct)        AS avg_bps,
+    MAX(created_at)     AS last_seen
+  FROM deck_analyses
+  GROUP BY commander, color_identity
+  ORDER BY total_analyses DESC;
+*/
+
+const SUPABASE_URL = 'https://qpgddxdxshbdsqtcpypd.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9dcTwq-j2tcGNnVXlVhRRw_EaMnNA6Z';
+
+const _sb = (SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PEGA'))
+  ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null;
+
+async function trackAnalysis(report, source) {
+  if (!_sb) return; // Supabase no configurado — silently skip
+
+  try {
+    // Derivar identidad de color del deck completo
+    const allColors = new Set();
+    (report.all_cards || []).forEach(c =>
+      (c.color_identity || []).forEach(col => allColors.add(col))
+    );
+    const colorStr = ['W','U','B','R','G'].filter(c => allColors.has(c)).join('') || 'C';
+
+    const winTurn = (report.win_curve || []).findIndex(p => p >= 50);
+
+    await _sb.from('deck_analyses').insert({
+      commander:      report.commander || null,
+      bracket:        report.bracket,
+      color_identity: colorStr,
+      total_cards:    report.total_cards,
+      avg_cer:        report.avg_cer,
+      gc_count:       report.game_changers_count,
+      combo_count:    report.combos_summary?.included_count ?? 0,
+      bps_pct:        report.bps?.bps_pct ?? null,
+      win_turn_est:   winTurn >= 0 ? winTurn + 1 : null,
+      tier_dist:      report.tier_distribution,
+      top_cards:      (report.all_cards || []).slice(0, 10).map(c => c.name),
+      all_cards:      (report.all_cards || []).map(c => c.name),
+      region:         navigator.language || 'unknown',
+      source,
+    });
+  } catch (e) {
+    console.warn('[analytics] Error guardando datos:', e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════════════
+const GAME_CHANGERS = new Set([
+  'Mana Crypt','Mana Vault','Grim Monolith','Mox Diamond','Chrome Mox',
+  "Gaea's Cradle","Serra's Sanctum","Mishra's Workshop",
+  'Demonic Tutor','Vampiric Tutor','Imperial Seal','Mystical Tutor',
+  'Enlightened Tutor','Worldly Tutor','Gamble',
+  'Rhystic Study','Necropotence','Smothering Tithe','Mystic Remora',
+  'Sylvan Library','The One Ring','Ad Nauseam',
+  "Thassa's Oracle",'Underworld Breach','Doomsday',
+  'Cyclonic Rift','Force of Will','Fierce Guardianship','Mana Drain',
+  'Drannith Magistrate','Opposition Agent','Tergrid, God of Fright',
+  'Narset, Parter of Veils','Notion Thief',
+]);
+
+const BANNED_CARDS = new Set([
+  'dockside extortionist','mana crypt','jeweled lotus','nadu, winged wisdom',
+  'ancestral recall','balance','biorhythm','black lotus',
+  'braids, cabal minion','channel','chaos orb','coalition victory',
+  'emrakul, the aeons torn','erayo, soratami ascendant','falling star',
+  'fastbond','flash','gifts ungiven','golos, tireless pilgrim',
+  'griselbrand','hullbreacher','iona, shield of emeria','karakas',
+  'leovold, emissary of trest','library of alexandria','limited resources',
+  'lutri, the spellchaser','mox emerald','mox jet','mox pearl',
+  'mox ruby','mox sapphire','panoptic mirror','paradox engine',
+  'primeval titan','prophet of kruphix','recurring nightmare',
+  'rofellos, llanowar emissary','sundering titan','sway of the stars',
+  'sylvan primordial','time vault','time walk','tinker',
+  'tolarian academy','trade secrets','upheaval','worldfire',
+  "yawgmoth's bargain",
+]);
+
+const INVALID_CARDS = new Set([
+  'fire nation turret','knuckles the echidna','rms titanic',
+  "vivi's thunder magic",'ya viene el coco',
+]);
+
+const FAST_MANA = new Set([
+  'sol ring','mana vault','mana crypt','grim monolith','mox diamond','chrome mox',
+  'mox opal','mox amber','lotus petal','lotus bloom','black lotus',
+  'mox emerald','mox jet','mox pearl','mox ruby','mox sapphire',
+]);
+
+const BRACKET_NAMES = { 1:'Exhibition', 2:'Core', 3:'Upgraded', 4:'Optimized', 5:'cEDH' };
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let state = {
+  rawCards: [],       // enriched card objects from Scryfall
+  scoredCards: [],    // with cer, tier, wci
+  combos: null,
+  report: null,
+  commander: '',
+  bracket: 4,
+  sortKey: 'cer',
+  sortDir: -1,
+  charts: {},
+};
+
+// ═══════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════
+function show(id) { document.getElementById(id).classList.add('active'); }
+function hide(id) { document.getElementById(id).classList.remove('active'); }
+function switchPanel(id) {
+  ['panel-input','panel-progress','panel-dashboard'].forEach(p => {
+    document.getElementById(p).classList.toggle('active', p === id);
+  });
+}
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['text','file','moxfield'][i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// Steps
+const STEPS = [
+  { id:'s-parse',    label:'Parseando decklist' },
+  { id:'s-scryfall', label:'Enriqueciendo desde Scryfall' },
+  { id:'s-combos',   label:'Buscando combos (Commander Spellbook)' },
+  { id:'s-calc',     label:'Calculando CER / BPS / WCI' },
+  { id:'s-render',   label:'Generando dashboard' },
+];
+function initSteps() {
+  const el = document.getElementById('step-list');
+  el.innerHTML = STEPS.map(s => `
+    <div class="step" id="${s.id}">
+      <div class="step-icon wait" id="${s.id}-icon">○</div>
+      <span id="${s.id}-label">${s.label}</span>
+    </div>`).join('');
+}
+function setStep(id, state, label) {
+  const icon = document.getElementById(id+'-icon');
+  if (!icon) return;
+  icon.className = `step-icon ${state}`;
+  if (state === 'spin')  icon.innerHTML = '<span class="spinning">◌</span>';
+  else if (state === 'done') icon.innerHTML = '✓';
+  else if (state === 'err')  icon.innerHTML = '✗';
+  else if (state === 'skip') icon.innerHTML = '–';
+  else icon.innerHTML = '○';
+  if (label) document.getElementById(id+'-label').textContent = label;
+}
+
+function showInputError(msg) {
+  const el = document.getElementById('input-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+function clearInputError() {
+  document.getElementById('input-error').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INPUT HANDLING
+// ═══════════════════════════════════════════════════════════
+let fileContent = '';
+
+function handleFile(file) {
+  if (!file) return;
+  document.getElementById('file-name').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => { fileContent = e.target.result; };
+  reader.readAsText(file);
+}
+
+// Drag-and-drop
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) { document.getElementById('file-input').files = e.dataTransfer.files; handleFile(file); }
+});
+
+async function loadMoxfield() {
+  const url = document.getElementById('moxfield-url').value.trim();
+  const status = document.getElementById('moxfield-status');
+  if (!url) return;
+
+  const m = url.match(/moxfield\.com\/decks\/([A-Za-z0-9_\-]+)/);
+  if (!m) { status.innerHTML = '<span style="color:var(--red)">URL no válida</span>'; return; }
+  const deckId = m[1];
+
+  status.innerHTML = '<span style="color:var(--muted)">Intentando cargar…</span>';
+
+  // Try direct + via allorigins proxy
+  const endpoints = [
+    `https://api2.moxfield.com/v3/decks/all/${deckId}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent('https://api2.moxfield.com/v3/decks/all/'+deckId)}`,
+  ];
+
+  for (const ep of endpoints) {
+    try {
+      const res = await fetch(ep, {
+        headers: { 'Accept':'application/json', 'Origin':'https://www.moxfield.com' },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const cards = parseMoxfieldData(data);
+      if (!cards.length) continue;
+
+      // Fill the text tab with the parsed list
+      const list = cards.map(c => c.name).join('\n');
+      document.getElementById('deck-text').value = list;
+      switchTab('text');
+
+      // Auto-detect commander
+      const cmdrs = Object.values(data.commanders || {}).map(e => e.card?.name).filter(Boolean);
+      if (cmdrs.length) document.getElementById('commander-input').value = cmdrs.join(' // ');
+
+      status.innerHTML = `<span style="color:var(--green)">✓ ${cards.length} cartas cargadas${cmdrs.length ? ' · Comandante: '+cmdrs[0] : ''}</span>`;
+      return;
+    } catch {}
+  }
+
+  // All failed
+  const exportUrl = `https://www.moxfield.com/decks/${deckId}/export/txt`;
+  status.innerHTML = `<span style="color:var(--red)">Moxfield bloqueó la request (Cloudflare).</span><br>
+    <span style="font-size:.82rem;color:var(--muted)">
+      Descarga el deck aquí y pégalo en "Pegar lista":<br>
+      <a href="${exportUrl}" target="_blank">${exportUrl}</a>
+    </span>`;
+}
+
+function parseMoxfieldData(data) {
+  const seen = new Set(), cards = [];
+  for (const board of ['mainboard','commanders']) {
+    for (const entry of Object.values((data.boards?.[board]?.cards) || {})) {
+      const name = entry.card?.name?.trim();
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
+      cards.push({ name });
+    }
+  }
+  return cards;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PARSING
+// ═══════════════════════════════════════════════════════════
+function parseDecklist(text) {
+  const names = [];
+  const seen = new Set();
+  for (const raw of text.split('\n')) {
+    let line = raw.trim();
+    if (!line || line.startsWith('#') || line.startsWith('//')) continue;
+    // Section headers like "Lands:" or "Commander"
+    if (/^[A-Z][a-zA-Z ]+:$/.test(line)) continue;
+    line = line.replace(/^\d+x?\s+/, '');            // remove qty
+    line = line.replace(/\s+\([A-Z0-9]+\)\s*\d*$/, ''); // remove (SET) 123
+    line = line.replace(/\s+#\S+.*$/, '');            // remove #tags
+    const name = line.trim();
+    if (!name || INVALID_CARDS.has(name.toLowerCase()) || seen.has(name.toLowerCase())) continue;
+    seen.add(name.toLowerCase());
+    names.push(name);
+  }
+  return names;
+}
+
+function parseCSV(text) {
+  const lines = text.split('\n');
+  if (!lines.length) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim().toLowerCase());
+  const nameCol = headers.findIndex(h => ['name','card name','card'].includes(h));
+  if (nameCol === -1) return [];
+  const names = [];
+  const seen = new Set();
+  for (const line of lines.slice(1)) {
+    const cells = line.split(',');
+    const name = (cells[nameCol] || '').replace(/"/g,'').trim();
+    if (!name || INVALID_CARDS.has(name.toLowerCase()) || seen.has(name.toLowerCase())) continue;
+    seen.add(name.toLowerCase());
+    names.push(name);
+  }
+  return names;
+}
+
+function getActiveInput() {
+  const activeTab = document.querySelector('.tab-btn.active')?.textContent;
+  if (activeTab === 'Subir archivo') return fileContent;
+  if (activeTab === 'Moxfield URL') return document.getElementById('deck-text').value;
+  return document.getElementById('deck-text').value;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCRYFALL API
+// ═══════════════════════════════════════════════════════════
+async function fetchScryfall(names) {
+  const map = {};
+  for (let i = 0; i < names.length; i += 75) {
+    const batch = names.slice(i, i+75);
+    try {
+      const res = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+        body: JSON.stringify({ identifiers: batch.map(n => ({ name: n })) }),
+      });
+      const data = await res.json();
+      (data.data || []).forEach(c => { map[c.name.toLowerCase()] = c; });
+    } catch (e) { console.warn('Scryfall batch error', e); }
+    if (i + 75 < names.length) await sleep(120);
+  }
+  return map;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COMMANDER SPELLBOOK
+// ═══════════════════════════════════════════════════════════
+async function fetchCombos(cardNames, commander) {
+  const commanders = commander.split(' // ').map(s => s.trim()).filter(Boolean);
+  const cmdSet = new Set(commanders.map(c => c.toLowerCase()));
+  const main = cardNames.filter(n => !cmdSet.has(n.toLowerCase()));
+  try {
+    const res = await fetch('https://backend.commanderspellbook.com/find-my-combos?limit=200', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify({
+        main: main.map(n => ({ card: n })),
+        commanders: commanders.map(n => ({ card: n })),
+      }),
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!res.ok) return null;
+    const raw = await res.json();
+    return processSpellbook(raw);
+  } catch { return null; }
+}
+
+const ZONE_MAP = { B:'Battlefield', H:'Hand', G:'Graveyard', E:'Exile', L:'Library', C:'Command Zone' };
+const BRACKET_TAG = { R:'Ruthless (B4)', S:'Spicy (B3-4)', P:'Powerful (B3)', O:'Oddball', C:'Core (B2)', E:'Exhibition', B:'Banned' };
+
+function processSpellbook(raw) {
+  const r = Array.isArray(raw.results) ? raw.results[0] : (raw.results || {});
+  const normalizeVariant = v => ({
+    id: v.id,
+    card_names: (v.uses||[]).map(u => u.card?.name || '?'),
+    effects: (v.produces||[]).map(p => p.feature?.name || '?'),
+    description: v.description || '',
+    bracket_tag: v.bracketTag || '?',
+    bracket_label: BRACKET_TAG[v.bracketTag] || 'Unknown',
+    popularity: v.popularity || 0,
+    mana_needed: v.manaNeeded || null,
+  });
+  const included = (r.included || []).map(normalizeVariant);
+  const almost   = (r.almostIncluded || []).map(normalizeVariant);
+  return {
+    summary: { included_count: included.length, almost_included_count: almost.length },
+    included,
+    almost_included: almost,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CER CALCULATION
+// ═══════════════════════════════════════════════════════════
+function estimatePIR(card, bracket) {
+  const rank = card.edhrec_rank;
+  if (!rank || rank <= 0) return bracket >= 4 ? 2.0 : 1.0;
+  const score = Math.max(0, 10.0 - 2.0 * Math.log10(rank));
+  if (bracket <= 2 && GAME_CHANGERS.has(card.name)) return 0.0;
+  return Math.min(10, Math.max(0, score));
+}
+
+function estimateTSC(card, bracket) {
+  const cmc = card.cmc || 0;
+  const oracle = (card.oracle_text || '').toLowerCase();
+  const type = (card.type_line || '').toLowerCase();
+  let score = 5.0;
+  if      (cmc === 0) score += 3.0;
+  else if (cmc <= 1)  score += 2.5;
+  else if (cmc <= 2)  score += 1.5;
+  else if (cmc <= 3)  score += 0.5;
+  else if (cmc >= 6)  score -= 2.0;
+  else if (cmc >= 4)  score -= 0.5;
+  if (oracle.includes('add') && oracle.match(/\{[WUBRG1-9C]\}/)) score += 1.5;
+  if (oracle.includes('search your library')) score += bracket >= 4 ? 2.0 : 1.0;
+  if (oracle.includes('draw a card') || oracle.includes('draw two') || oracle.includes('draw three')) score += 1.0;
+  if (type.includes('land')) score = 5.0;
+  const mult = {1:0.6, 2:0.7, 3:0.85, 4:1.0, 5:1.2}[bracket] || 1.0;
+  return Math.min(10, Math.max(0, score * mult));
+}
+
+function estimateSYN(card, bracket) {
+  let score = 5.0;
+  const oracle = (card.oracle_text || '').toLowerCase();
+  for (const kw of ['you win the game','infinite','untap target','exile your library','mill','each opponent loses']) {
+    if (oracle.includes(kw)) score += 1.5;
+  }
+  for (const kw of ['counter target','hexproof',"can't be countered",'indestructible']) {
+    if (oracle.includes(kw)) score += 0.5;
+  }
+  if (GAME_CHANGERS.has(card.name) && bracket >= 3) score += 2.0;
+  return Math.min(10, Math.max(0, score));
+}
+
+function estimateFLX(card, bracket) {
+  let score = 5.0;
+  const colors = card.color_identity || [];
+  const oracle = (card.oracle_text || '').toLowerCase();
+  const type = (card.type_line || '').toLowerCase();
+  if      (colors.length === 0) score += 3.0;
+  else if (colors.length === 1) score += 1.5;
+  else if (colors.length === 2) score += 0.5;
+  else if (colors.length >= 4)  score -= 1.5;
+  if (oracle.includes('choose one') || oracle.includes('choose two')) score += 1.0;
+  if (oracle.includes('cycling') || oracle.includes('channel')) score += 0.5;
+  if (type.includes('artifact') && colors.length === 0) score += 1.0;
+  return Math.min(10, Math.max(0, score));
+}
+
+function calculateCER(card, bracket) {
+  const name = card.name || '';
+  const isBanned = BANNED_CARDS.has(name.toLowerCase());
+  const isGC = GAME_CHANGERS.has(name);
+
+  if (isBanned) return { cer:0, tier:'BANNED', gc:false, banned:true, components:{} };
+  if (isGC && bracket <= 2) return { cer:0, tier:'N/A', gc:true, banned:false, note:'GC no permitido B1-2', components:{} };
+
+  const rank = card.edhrec_rank;
+  let wir = rank && rank > 0 ? Math.max(0, 8.0 - 1.5 * Math.log10(rank)) : 5.0;
+  if (isGC && bracket >= 4) wir = Math.max(wir, 8.5);
+  if ((card.oracle_text||'').toLowerCase().includes('you win the game') && bracket >= 4) wir = Math.max(wir, 8.0);
+
+  const pir = estimatePIR(card, bracket);
+  const tsc = estimateTSC(card, bracket);
+  const syn = estimateSYN(card, bracket);
+  const flx = estimateFLX(card, bracket);
+  const cer = +(wir*0.35 + pir*0.25 + tsc*0.20 + syn*0.10 + flx*0.10).toFixed(2);
+
+  let tier;
+  if      (cer >= 9.0) tier = 'S-Tier';
+  else if (cer >= 7.5) tier = 'A-Tier';
+  else if (cer >= 6.0) tier = 'B-Tier';
+  else if (cer >= 4.5) tier = 'C-Tier';
+  else if (cer >= 3.0) tier = 'D-Tier';
+  else                  tier = 'F-Tier';
+
+  return { cer, tier, gc:isGC, banned:false,
+           components:{ wir:+wir.toFixed(2), pir:+pir.toFixed(2), tsc:+tsc.toFixed(2), syn:+syn.toFixed(2), flx:+flx.toFixed(2) } };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WCI
+// ═══════════════════════════════════════════════════════════
+function calculateWCI(cards, combos) {
+  const included = (combos?.included || []);
+  const top3 = [...included].sort((a,b) => b.popularity - a.popularity).slice(0,3);
+  const comboSets = top3.map(c => new Set(c.card_names.map(n => n.toLowerCase())));
+
+  return cards.map(card => {
+    const nl = (card.name||'').toLowerCase();
+    const oracle = (card.oracle_text||'').toLowerCase();
+    const type = (card.type_line||'').toLowerCase();
+    const direct = comboSets.reduce((s,set) => s + (set.has(nl) ? 1 : 0), 0) / Math.max(comboSets.length, 1);
+    let enabler = 0;
+    if (oracle.includes('search your library')) enabler = Math.max(enabler, 0.80);
+    if (FAST_MANA.has(nl) || (card.cmc===0 && type.includes('artifact'))) enabler = Math.max(enabler, 0.65);
+    if (card.gc) enabler = Math.max(enabler, 0.55);
+    if (card.cmc<=2 && type.includes('artifact') && oracle.includes('add')) enabler = Math.max(enabler, 0.45);
+    if (card.cer > 0) enabler = Math.max(enabler, card.cer/10);
+    return { ...card, wci: +Math.min(100, (direct*0.70 + enabler*0.30)*100).toFixed(1) };
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BPS
+// ═══════════════════════════════════════════════════════════
+function calculateBPS(cards, combos, bracket, winCurve) {
+  const target = bracket + 1;
+
+  // GC density
+  const gcCount = cards.filter(c => c.gc).length;
+  const [b4gc, b5gc] = [4, 9];
+  const gcScore = target===5
+    ? Math.min(1, Math.max(0, (gcCount-b4gc)/(b5gc-b4gc)))
+    : Math.min(1, gcCount/b4gc);
+
+  // CER avg
+  const cerVals = cards.filter(c => c.cer>0).map(c => c.cer);
+  const avgCer = cerVals.length ? cerVals.reduce((a,b)=>a+b,0)/cerVals.length : 0;
+  const [b4cer, b5cer] = [4.5, 6.5];
+  const cerScore = target===5
+    ? Math.min(1, Math.max(0, (avgCer-b4cer)/(b5cer-b4cer)))
+    : Math.min(1, Math.max(0, avgCer/b4cer));
+
+  // Win speed
+  let avgTurn;
+  if (winCurve && winCurve.length) {
+    avgTurn = winCurve.findIndex(p => p>=50) + 1 || 8;
+  } else {
+    const fastMana = cards.filter(c => FAST_MANA.has((c.name||'').toLowerCase()) || (c.cmc===0 && (c.type_line||'').toLowerCase().includes('artifact'))).length;
+    const tutors = cards.filter(c => (c.oracle_text||'').toLowerCase().includes('search your library')).length;
+    avgTurn = Math.max(2, 7 - Math.min(3, Math.floor(fastMana/2)) - Math.min(2, Math.floor(tutors/3)));
+  }
+  const [b4t, b5t] = [6, 4];
+  const speedScore = target===5
+    ? Math.min(1, Math.max(0, (b4t-avgTurn)/(b4t-b5t)))
+    : Math.min(1, Math.max(0, (10-avgTurn)/(10-b4t)));
+
+  // Tutor density
+  const tutorCount = cards.filter(c => (c.oracle_text||'').toLowerCase().includes('search your library')).length;
+  const [b4tu, b5tu] = [6, 10];
+  const tutorScore = target===5
+    ? Math.min(1, Math.max(0, (tutorCount-b4tu)/(b5tu-b4tu)))
+    : Math.min(1, tutorCount/b4tu);
+
+  // Combo presence
+  const comboCount = (combos?.included||[]).length;
+  const [b4co, b5co] = [2, 3];
+  const comboScore = target===5
+    ? Math.min(1, Math.max(0, (comboCount-b4co)/(b5co-b4co)))
+    : Math.min(1, comboCount/b4co);
+
+  const bps = +(gcScore*0.30 + cerScore*0.25 + speedScore*0.20 + tutorScore*0.15 + comboScore*0.10)*100;
+
+  return {
+    bps_pct: +bps.toFixed(1),
+    target_bracket: target,
+    dimensions: {
+      gc_density:    { value:gcCount,   score_pct:+(gcScore*100).toFixed(1),    b4_min:b4gc, b5_min:b5gc, weight:.30 },
+      cer_avg:       { value:+avgCer.toFixed(2), score_pct:+(cerScore*100).toFixed(1), b4_min:b4cer, b5_min:b5cer, weight:.25 },
+      win_speed:     { value:`T${avgTurn}`, score_pct:+(speedScore*100).toFixed(1), b4_min:`T${b4t}`, b5_min:`T${b5t}`, weight:.20 },
+      tutor_density: { value:tutorCount, score_pct:+(tutorScore*100).toFixed(1), b4_min:b4tu, b5_min:b5tu, weight:.15 },
+      combo_presence:{ value:comboCount, score_pct:+(comboScore*100).toFixed(1), b4_min:b4co, b5_min:b5co, weight:.10 },
+    },
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WIN CURVE
+// ═══════════════════════════════════════════════════════════
+function calculateWinCurve(cards, combos) {
+  const included = (combos?.included||[]);
+  const top3 = [...included].sort((a,b)=>b.popularity-a.popularity).slice(0,3);
+  const comboNames = new Set(top3.flatMap(c => c.card_names.map(n=>n.toLowerCase())));
+
+  const N = 99;
+  const nFast   = cards.filter(c => FAST_MANA.has((c.name||'').toLowerCase()) || (c.cmc===0 && (c.type_line||'').toLowerCase().includes('artifact'))).length;
+  const nRocks  = cards.filter(c => (c.type_line||'').toLowerCase().includes('artifact') && c.cmc>=1 && c.cmc<=2 && ((c.oracle_text||'').includes('{'))).length;
+  const nTutors = cards.filter(c => (c.oracle_text||'').toLowerCase().includes('search your library')).length;
+  const nCombo  = cards.filter(c => comboNames.has((c.name||'').toLowerCase())).length;
+  const comboCMC = nCombo ? cards.filter(c=>comboNames.has((c.name||'').toLowerCase())).reduce((s,c)=>s+(c.cmc||2),0)/nCombo : 3;
+  const manaNeeded = Math.max(2, comboCMC + 1);
+
+  function pAtLeast1(N, K, n) {
+    if (K<=0||n<=0) return 0;
+    if (K>=N||n>=N) return 1;
+    // approx using complement
+    let pZero = 1;
+    for (let i=0; i<Math.min(n,N-K); i++) pZero *= (N-K-i)/(N-i);
+    return Math.max(0, Math.min(1, 1-pZero));
+  }
+
+  return Array.from({length:10}, (_,i) => {
+    const t = i+1;
+    const nSeen = Math.min(7+t, N);
+    const expFast  = nFast  * nSeen / N;
+    const expRocks = nRocks * nSeen / N;
+    const mana = t + expRocks + expFast*1.5;
+    const manaFactor = Math.min(1, mana/manaNeeded);
+    const pCombo = pAtLeast1(N, nCombo, nSeen);
+    const pTutor = pAtLeast1(N, nTutors, nSeen);
+    const pAccess = pCombo + (1-pCombo)*pTutor*0.75;
+    return +(Math.min(1, pAccess*manaFactor)*100).toFixed(1);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MAIN PIPELINE
+// ═══════════════════════════════════════════════════════════
+async function startAnalysis() {
+  clearInputError();
+  const commander = document.getElementById('commander-input').value.trim();
+  const bracket = parseInt(document.getElementById('bracket-select').value);
+
+  // Get text
+  const activeTab = document.querySelector('.tab-btn.active').textContent.trim();
+  let rawText = '';
+  if (activeTab === 'Subir archivo') rawText = fileContent;
+  else rawText = document.getElementById('deck-text').value;
+
+  if (!rawText.trim()) { showInputError('Pega una lista, sube un archivo o carga un deck de Moxfield.'); return; }
+
+  // Parse
+  let names;
+  if (activeTab === 'Subir archivo' && document.getElementById('file-input').value.endsWith('.csv')) {
+    names = parseCSV(rawText);
+  } else {
+    names = parseDecklist(rawText);
+  }
+  if (!names.length) { showInputError('No se encontraron cartas válidas en la lista.'); return; }
+
+  state.commander = commander || 'Commander';
+  state.bracket = bracket;
+
+  switchPanel('panel-progress');
+  initSteps();
+
+  // Step 1: Parse
+  setStep('s-parse','spin');
+  await sleep(50);
+  // Apply bans
+  const cardObjs = names.map(name => ({
+    name,
+    banned: BANNED_CARDS.has(name.toLowerCase()),
+    gc: GAME_CHANGERS.has(name),
+  }));
+  setStep('s-parse','done', `Parseando decklist — ${names.length} cartas`);
+
+  // Step 2: Scryfall
+  setStep('s-scryfall','spin');
+  const sfMap = await fetchScryfall(names);
+  const enriched = cardObjs.map(card => {
+    const sf = sfMap[card.name.toLowerCase()];
+    if (!sf) return { ...card, cmc:0, type_line:'', oracle_text:'', color_identity:[], edhrec_rank:null };
+    return {
+      ...card,
+      name: sf.name, // use canonical Scryfall name
+      cmc: sf.cmc || 0,
+      type_line: sf.type_line || '',
+      oracle_text: sf.oracle_text || '',
+      color_identity: sf.color_identity || [],
+      edhrec_rank: sf.edhrec_rank || null,
+    };
+  });
+  const found = enriched.filter(c => sfMap[c.name.toLowerCase()]).length;
+  setStep('s-scryfall','done', `Scryfall — ${found}/${names.length} cartas enriquecidas`);
+
+  // Step 3: Combos
+  setStep('s-combos','spin');
+  let combos = null;
+  if (commander) {
+    combos = await fetchCombos(names, commander);
+  }
+  if (combos) {
+    setStep('s-combos','done', `Combos — ${combos.summary.included_count} encontrados · ${combos.summary.almost_included_count} casi-incluidos`);
+  } else {
+    setStep('s-combos','skip', 'Combos — no disponibles (CORS o sin comandante)');
+  }
+
+  // Step 4: Calculate
+  setStep('s-calc','spin');
+  await sleep(50);
+  // Score cards
+  const scored = enriched.map(card => {
+    const result = calculateCER(card, bracket);
+    return { ...card, ...result };
+  });
+  // WCI
+  const withWCI = calculateWCI(scored, combos);
+  // Win curve
+  const winCurve = calculateWinCurve(withWCI, combos);
+  // BPS
+  const bps = calculateBPS(withWCI, combos, bracket, winCurve);
+  // Sort by CER desc
+  withWCI.sort((a,b) => b.cer - a.cer);
+
+  state.scoredCards = withWCI;
+  state.combos = combos;
+
+  // Build report
+  const tierDist = {};
+  withWCI.forEach(c => { tierDist[c.tier] = (tierDist[c.tier]||0)+1; });
+  const cerVals = withWCI.filter(c=>c.cer>0).map(c=>c.cer);
+  state.report = {
+    commander,
+    bracket,
+    total_cards: withWCI.length,
+    avg_cer: cerVals.length ? +(cerVals.reduce((a,b)=>a+b)/cerVals.length).toFixed(2) : 0,
+    tier_distribution: tierDist,
+    game_changers_count: withWCI.filter(c=>c.gc).length,
+    combos_summary: combos?.summary || { included_count:0, almost_included_count:0 },
+    win_curve: winCurve,
+    bps,
+    all_cards: withWCI,
+  };
+
+  setStep('s-calc','done','CER / BPS / WCI calculados');
+
+  // Step 5: Render
+  setStep('s-render','spin');
+  await sleep(80);
+  renderDashboard(state.report, combos);
+  setStep('s-render','done','Dashboard listo');
+
+  // Track — fire-and-forget, no bloquea la UI
+  const inputSource = document.querySelector('.tab-btn.active').textContent.trim();
+  const sourceKey = inputSource === 'Moxfield URL' ? 'moxfield' : inputSource === 'Subir archivo' ? 'file' : 'paste';
+  trackAnalysis(state.report, sourceKey);
+
+  await sleep(300);
+  switchPanel('panel-dashboard');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DASHBOARD RENDERING
+// ═══════════════════════════════════════════════════════════
+function renderDashboard(report, combos) {
+  const { commander, bracket, total_cards, avg_cer, tier_distribution: td,
+          game_changers_count: gcs, combos_summary: cs, win_curve, bps, all_cards } = report;
+
+  document.getElementById('d-commander').textContent = commander || 'Commander';
+  document.getElementById('d-bracket-tag').textContent = `Bracket ${bracket} — ${BRACKET_NAMES[bracket]||''}`;
+  document.getElementById('d-date').textContent = `Análisis: ${new Date().toLocaleString('es-MX')} · CER v1.0`;
+
+  // KPIs
+  const t50 = win_curve.findIndex(p=>p>=50)+1;
+  const kpis = [
+    { val: avg_cer.toFixed(2), lbl:'CER Promedio' },
+    { val: total_cards,        lbl:'Cartas Analizadas' },
+    { val: (td['S-Tier']||0)+(td['A-Tier']||0), lbl:'S/A Tier' },
+    { val: gcs,                lbl:'Game Changers' },
+    { val: cs.included_count,  lbl:'Combos' },
+    { val: t50 ? 'T'+t50 : '—', lbl:'Turno de Victoria Est.' },
+    { val: bps.bps_pct+'%',    lbl:`BPS → B${bps.target_bracket}` },
+  ];
+  document.getElementById('d-kpis').innerHTML = kpis.map(k =>
+    `<div class="kpi-card"><div class="val">${k.val}</div><div class="lbl">${k.lbl}</div></div>`
+  ).join('');
+
+  // Destroy old charts
+  Object.values(state.charts).forEach(c => c.destroy?.());
+  state.charts = {};
+
+  // Charts
+  renderCharts(report);
+
+  // BPS
+  document.getElementById('d-bps').innerHTML = renderBPS(bps);
+
+  // Combos
+  document.getElementById('d-combos').innerHTML = combos ? renderCombos(combos) : '';
+
+  // Card table
+  document.getElementById('card-table-title').textContent = `Todas las Cartas — ${total_cards}`;
+  renderCardTable(all_cards);
+}
+
+function renderCharts(report) {
+  const { tier_distribution:td, win_curve, all_cards } = report;
+  const TIER_ORDER = ['S-Tier','A-Tier','B-Tier','C-Tier','D-Tier','F-Tier','N/A','BANNED'];
+  const TIER_COLORS = {
+    'S-Tier':'#1565C0','A-Tier':'#1976D2','B-Tier':'#455A64','C-Tier':'#78909C',
+    'D-Tier':'#90A4AE','F-Tier':'#B0BEC5','N/A':'#CFD8DC','BANNED':'#C62828',
+  };
+
+  // Tier donut
+  const tierKeys = TIER_ORDER.filter(t => td[t]>0);
+  state.charts.tier = new Chart(document.getElementById('c-tier'), {
+    type:'doughnut',
+    data:{ labels:tierKeys, datasets:[{ data:tierKeys.map(t=>td[t]), backgroundColor:tierKeys.map(t=>TIER_COLORS[t]||'#999'), borderWidth:0, hoverOffset:8 }] },
+    options:{ plugins:{ legend:{ position:'right', labels:{ padding:10, usePointStyle:true, font:{size:11} } } }, cutout:'60%' },
+  });
+
+  // CER histogram
+  const bins = {'0-2':0,'2-4':0,'4-5':0,'5-6':0,'6-7.5':0,'7.5-9':0,'9-10':0};
+  all_cards.forEach(c => {
+    const v=c.cer||0;
+    if(v<2)bins['0-2']++;else if(v<4)bins['2-4']++;else if(v<5)bins['4-5']++;
+    else if(v<6)bins['5-6']++;else if(v<7.5)bins['6-7.5']++;else if(v<9)bins['7.5-9']++;else bins['9-10']++;
+  });
+  state.charts.cer = new Chart(document.getElementById('c-cer'), {
+    type:'bar',
+    data:{ labels:Object.keys(bins), datasets:[{ data:Object.values(bins), backgroundColor:['#CFD8DC','#B0BEC5','#90A4AE','#78909C','#455A64','#1976D2','#1565C0'], borderRadius:5, borderSkipped:false }] },
+    options:{ plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,ticks:{stepSize:1}}, x:{grid:{display:false}} } },
+  });
+
+  // Mana curve
+  const cmc = {'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7+':0};
+  all_cards.forEach(c => { const k=Math.min(7,c.cmc||0); cmc[k<7?String(k):'7+']++; });
+  state.charts.mana = new Chart(document.getElementById('c-mana'), {
+    type:'bar',
+    data:{ labels:Object.keys(cmc), datasets:[{ data:Object.values(cmc), backgroundColor:'#1565C0', borderRadius:5, borderSkipped:false }] },
+    options:{ plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true}, x:{grid:{display:false}, title:{display:true,text:'CMC'}} } },
+  });
+
+  // Type pie
+  const types = {Creature:0,Instant:0,Sorcery:0,Artifact:0,Enchantment:0,Planeswalker:0,Land:0,Other:0};
+  const TYPE_C = {Creature:'#1565C0',Instant:'#1976D2',Sorcery:'#1E88E5',Artifact:'#78909C',Enchantment:'#546E7A',Planeswalker:'#455A64',Land:'#90A4AE',Other:'#B0BEC5'};
+  all_cards.forEach(c => {
+    const tl=c.type_line||'';
+    let matched=false;
+    for(const t of ['Land','Creature','Instant','Sorcery','Artifact','Enchantment','Planeswalker']){
+      if(tl.includes(t)){types[t]++;matched=true;break;}
+    }
+    if(!matched)types['Other']++;
+  });
+  const typeK=Object.entries(types).filter(([,v])=>v>0);
+  state.charts.type = new Chart(document.getElementById('c-type'), {
+    type:'pie',
+    data:{ labels:typeK.map(([k])=>k), datasets:[{ data:typeK.map(([,v])=>v), backgroundColor:typeK.map(([k])=>TYPE_C[k]||'#999'), borderWidth:0, hoverOffset:8 }] },
+    options:{ plugins:{ legend:{ position:'right', labels:{ padding:10, usePointStyle:true, font:{size:11} } } } },
+  });
+
+  // WCI horizontal bar
+  const wciCards = [...all_cards].sort((a,b)=>b.wci-a.wci).slice(0,20);
+  state.charts.wci = new Chart(document.getElementById('c-wci'), {
+    type:'bar',
+    data:{ labels:wciCards.map(c=>c.name), datasets:[{ data:wciCards.map(c=>c.wci), backgroundColor:wciCards.map(c=>c.wci>=70?'#1565C0':c.wci>=40?'#1976D2':c.wci>=20?'#455A64':'#90A4AE'), borderRadius:4, borderSkipped:false }] },
+    options:{
+      indexAxis:'y', plugins:{legend:{display:false}},
+      scales:{ x:{beginAtZero:true,max:100,title:{display:true,text:'Win Contribution Index (%)'}}, y:{grid:{display:false},ticks:{font:{size:10}}} },
+    },
+  });
+
+  // Win curve
+  const wincurveEl = document.getElementById('c-wincurve-wrap');
+  if (report.win_curve && report.win_curve.some(v=>v>0)) {
+    wincurveEl.style.display='';
+    state.charts.wincurve = new Chart(document.getElementById('c-wincurve'), {
+      type:'line',
+      data:{ labels:report.win_curve.map((_,i)=>'T'+(i+1)), datasets:[{ label:'P(victoria) %', data:report.win_curve, borderColor:'#1565C0', backgroundColor:'#1565C022', borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#1565C0', fill:true, tension:.35 }] },
+      options:{
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>` P(win) = ${ctx.raw.toFixed(1)}%`}}},
+        scales:{ y:{beginAtZero:true,max:100,title:{display:true,text:'Probabilidad (%)'},ticks:{callback:v=>v+'%'}}, x:{grid:{display:false}} },
+      },
+    });
+  } else { wincurveEl.style.display='none'; }
+}
+
+function renderBPS(bps) {
+  const pct = bps.bps_pct;
+  const target = bps.target_bracket;
+  const angle = pct/100*180;
+  const rad = Math.PI - (angle * Math.PI / 180);
+  const cx=100,cy=100,r=80;
+  const x = cx + r*Math.cos(rad);
+  const y = cy - r*Math.sin(rad);
+  const largeArc = angle > 180 ? 1 : 0;
+
+  const DIM_LABELS = { gc_density:'GC Density', cer_avg:'CER Promedio', win_speed:'Win Speed', tutor_density:'Tutor Density', combo_presence:'Combo Presence' };
+  const DIM_COLORS = { gc_density:'#1565C0', cer_avg:'#1976D2', win_speed:'#455A64', tutor_density:'#78909C', combo_presence:'#90A4AE' };
+
+  const bars = Object.entries(bps.dimensions).map(([key,dim]) => `
+    <div>
+      <div class="dim-bar-label">
+        <span>${DIM_LABELS[key]} <span style="color:var(--muted)">(${Math.round(dim.weight*100)}%)</span></span>
+        <span style="color:${DIM_COLORS[key]};font-weight:600">${dim.value} / ${dim.b5_min} → ${dim.score_pct}%</span>
+      </div>
+      <div class="dim-bar-track">
+        <div class="dim-bar-fill" style="width:${Math.min(100,dim.score_pct)}%;background:${DIM_COLORS[key]}"></div>
+      </div>
+    </div>`).join('');
+
+  return `
+<div class="section-card">
+  <h3>BPS — Bracket Proximity Score hacia B${target}</h3>
+  <div class="bps-grid">
+    <div style="text-align:center">
+      <svg viewBox="0 0 200 120" style="width:180px">
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#dde2ea" stroke-width="16" stroke-linecap="round"/>
+        <path d="M 20 100 A 80 80 0 ${largeArc} 1 ${x.toFixed(2)} ${y.toFixed(2)}"
+              fill="none" stroke="#1565C0" stroke-width="16" stroke-linecap="round"/>
+        <text x="100" y="92" text-anchor="middle" fill="var(--text)" font-family="Inter,sans-serif" font-size="22" font-weight="700">${pct}%</text>
+        <text x="100" y="110" text-anchor="middle" fill="var(--muted)" font-size="11">hacia B${target}</text>
+      </svg>
+    </div>
+    <div>${bars}</div>
+  </div>
+</div>`;
+}
+
+function renderCombos(combos) {
+  if (!combos?.included?.length) return '';
+  const TAG_COLORS = { R:'#C62828', S:'#E65100', P:'#E65100', O:'#90A4AE', C:'#1565C0', E:'#2E7D32', B:'#B71C1C' };
+
+  const rows = combos.included.map(c => {
+    const color = TAG_COLORS[c.bracket_tag] || '#90A4AE';
+    const cards = c.card_names.join(' + ');
+    const effects = c.effects.slice(0,3).join(', ');
+    const desc = c.description.slice(0,200) + (c.description.length>200?'…':'');
+    return `
+      <tr>
+        <td><span class="combo-tag" style="color:${color}">[${c.bracket_tag}]</span> <span style="color:var(--muted);font-size:.75rem">${c.bracket_label}</span></td>
+        <td style="font-weight:600">${cards}</td>
+        <td style="color:var(--muted);font-size:.85rem">${effects}</td>
+        <td style="font-variant-numeric:tabular-nums;font-size:.8rem">${(c.popularity||0).toLocaleString()}</td>
+      </tr>
+      <tr><td colspan="4" class="combo-desc">${desc}</td></tr>`;
+  }).join('');
+
+  const almost = combos.almost_included?.slice(0,5).map(c =>
+    `<tr><td style="font-weight:600;color:var(--blue)">${c.card_names.join(' + ')}</td><td style="color:var(--muted);font-size:.85rem">${c.effects.slice(0,2).join(', ')}</td></tr>`
+  ).join('') || '';
+
+  const almostSection = combos.almost_included?.length ? `
+  <div class="section-card" style="margin-top:14px">
+    <h3>Casi-Combos — Falta 1 Carta (${combos.summary.almost_included_count} total)</h3>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>Cartas del Combo</th><th>Efectos</th></tr></thead>
+      <tbody>${almost}</tbody>
+    </table></div>
+    ${combos.almost_included.length>5?`<p style="color:var(--muted);font-size:.78rem;margin-top:8px">…y ${combos.almost_included.length-5} combos más</p>`:''}
+  </div>` : '';
+
+  return `
+<div class="section-card">
+  <h3>Combos — Commander Spellbook
+    <span style="color:var(--green);font-size:.82rem;margin-left:12px">${combos.summary.included_count} incluidos</span>
+    <span style="color:var(--blue);font-size:.82rem;margin-left:8px">${combos.summary.almost_included_count} casi-incluidos</span>
+  </h3>
+  <div style="overflow-x:auto"><table>
+    <thead><tr><th>Tag</th><th>Cartas</th><th>Efectos</th><th>Popularidad</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>
+</div>${almostSection}`;
+}
+
+function renderCardTable(cards) {
+  const tbody = document.getElementById('card-tbody');
+  tbody.innerHTML = cards.map(card => {
+    const tc = tierClass(card.tier);
+    const type = cardType(card.type_line || '');
+    const gcBadge = card.gc ? '<span class="gc-badge">GC</span>' : '';
+    const banBadge = card.banned ? '<span class="ban-badge">BAN</span>' : '';
+    const q = encodeURIComponent(card.name);
+    const links = [
+      ['tcg','TCG',`https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${q}`],
+      ['ck','CK',`https://www.cardkingdom.com/catalog/search?search=header&filter[name]=${q}`],
+      ['mxn','MXN',`https://www.tcg.land/search?q=${q}`],
+    ].map(([cls,lbl,url])=>`<a href="${url}" target="_blank" rel="noopener" class="buy-link ${cls}">${lbl}</a>`).join('');
+
+    return `<tr data-cer="${card.cer}" data-name="${card.name.toLowerCase()}" data-tier="${tc}" data-type="${type.toLowerCase()}" data-gc="${card.gc?'1':'0'}" data-cmc="${card.cmc||0}">
+  <td class="card-name">${card.name}${gcBadge}${banBadge}</td>
+  <td style="text-align:center"><span class="cer-badge ${tc}">${card.cer.toFixed(2)}</span></td>
+  <td style="text-align:center"><span class="tier-tag ${tc}">${card.tier}</span></td>
+  <td style="text-align:center;color:var(--muted);font-size:.82rem">${card.cmc??0}</td>
+  <td style="font-size:.8rem;color:var(--secondary)">${type}</td>
+  <td style="text-align:right;white-space:nowrap">${links}</td>
+</tr>`;
+  }).join('');
+  filterCards();
+}
+
+function tierClass(tier) {
+  return { 'S-Tier':'stier','A-Tier':'atier','B-Tier':'btier','C-Tier':'ctier',
+           'D-Tier':'dtier','F-Tier':'ftier','N/A':'na','BANNED':'banned' }[tier] || 'ctier';
+}
+function cardType(tl) {
+  for (const t of ['Land','Creature','Instant','Sorcery','Artifact','Enchantment','Planeswalker']) if(tl.includes(t)) return t;
+  return 'Other';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TABLE SORT & FILTER
+// ═══════════════════════════════════════════════════════════
+function sortCards(key) {
+  if (state.sortKey === key) state.sortDir *= -1;
+  else { state.sortKey = key; state.sortDir = -1; }
+  const tbody = document.getElementById('card-tbody');
+  const rows = [...tbody.querySelectorAll('tr')];
+  rows.sort((a,b) => {
+    if (key==='name')  return state.sortDir * a.dataset.name.localeCompare(b.dataset.name);
+    if (key==='cer')   return state.sortDir * (parseFloat(a.dataset.cer)-parseFloat(b.dataset.cer));
+    if (key==='cmc')   return state.sortDir * (parseFloat(a.dataset.cmc)-parseFloat(b.dataset.cmc));
+    return 0;
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+function filterCards() {
+  const search = document.getElementById('card-search').value.toLowerCase();
+  const tier   = document.getElementById('tier-filter').value;
+  const type   = document.getElementById('type-filter').value;
+  const gcOnly = document.getElementById('gc-filter').checked;
+  let visible = 0;
+  document.querySelectorAll('#card-tbody tr').forEach(r => {
+    const show = (!search || r.dataset.name.includes(search))
+              && (!tier   || r.dataset.tier === tier)
+              && (!type   || r.dataset.type === type.toLowerCase())
+              && (!gcOnly || r.dataset.gc === '1');
+    r.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('card-count').textContent = `${visible} cartas`;
+}
+
+function resetFilters() {
+  ['card-search','tier-filter','type-filter'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('gc-filter').checked = false;
+  filterCards();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DOWNLOAD
+// ═══════════════════════════════════════════════════════════
+function downloadHTML() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `cedh-${(state.commander||'deck').replace(/[^a-z0-9]+/gi,'-').toLowerCase()}.html`;
+  a.click();
+}
+
+function resetApp() {
+  Object.values(state.charts).forEach(c => c.destroy?.());
+  state = { rawCards:[], scoredCards:[], combos:null, report:null, commander:'', bracket:4, sortKey:'cer', sortDir:-1, charts:{} };
+  fileContent = '';
+  document.getElementById('deck-text').value = '';
+  document.getElementById('commander-input').value = '';
+  document.getElementById('file-name').textContent = '';
+  switchPanel('panel-input');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
