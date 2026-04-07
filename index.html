@@ -752,6 +752,36 @@ async function fetchCombos(cardNames, commander) {
   }
 
 
+
+// ═══════════════════════════════════════════════════════════
+//  PROCESS SPELLBOOK RESPONSE
+// ═══════════════════════════════════════════════════════════
+const BRACKET_TAG = {
+  R: 'Ruthless (B4)', S: 'Spicy (B3-4)', P: 'Powerful (B3)',
+  O: 'Oddball', C: 'Core (B2)', E: 'Exhibition', B: 'Banned'
+};
+
+function processSpellbook(raw) {
+  const r = Array.isArray(raw.results) ? raw.results[0] : (raw.results || raw || {});
+  const normalizeVariant = v => ({
+    id: v.id,
+    card_names: (v.uses || []).map(u => u.card?.name || u.card || '?'),
+    effects: (v.produces || []).map(p => p.feature?.name || p.feature || '?'),
+    description: v.description || '',
+    bracket_tag: v.bracketTag || '?',
+    bracket_label: (BRACKET_TAG[v.bracketTag] || 'Unknown'),
+    popularity: v.popularity || 0,
+    mana_needed: v.manaNeeded || null,
+  });
+  const included = (r.included       || []).map(normalizeVariant);
+  const almost   = (r.almostIncluded || []).map(normalizeVariant);
+  return {
+    summary: { included_count: included.length, almost_included_count: almost.length },
+    included,
+    almost_included: almost,
+  };
+}
+
 // ═══════════════════════════════════════════════════════════
 //  CER CALCULATION
 // ═══════════════════════════════════════════════════════════
