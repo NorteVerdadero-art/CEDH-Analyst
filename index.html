@@ -272,8 +272,8 @@ tr:hover td { background:#f8fafc; }
   <div class="dash-toolbar">
     <button class="btn-ghost" onclick="resetApp()">← Analizar otro deck</button>
     <button class="btn-ghost" onclick="downloadHTML()">Descargar reporte HTML</button>
-    <a class="btn-ghost donate-btn" href="https://link.mercadopago.com.mx/norteverdadero" target="_blank" rel="noopener">💙 Apoyar el proyecto</a>
-    <a class="btn-ghost coffee-btn" href="https://paypal.me/mhidalgom" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    <a class="btn-ghost donate-btn" href="https://link.mercadopago.com.mx/norteverdadero" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:5px"><path d="M21.2 5.6C20.4 2.3 17.6 1 14.1 1H5.3C4.7 1 4.2 1.4 4.1 2L1 20.3c-.1.5.3 1 .8 1h5.1l1.3-8.1-.1.4C8.3 14.9 9 15 9.8 15h2.5c4.9 0 8.7-2 9.8-7.8.1-.3.1-.6.1-.9-.1 0-.1-.5-.2-.7z"/></svg>MercadoPago</a>
+    <a class="btn-ghost coffee-btn" href="https://paypal.me/mhidalgom" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:5px"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.59 3.025-2.566 6.243-8.558 6.243H9.828l-1.172 7.42h3.31c.458 0 .85-.333.922-.785l.038-.196.733-4.643.047-.256a.932.932 0 0 1 .921-.785h.58c3.76 0 6.705-1.528 7.565-5.948.36-1.847.173-3.389-.55-4.763z"/></svg>PayPal</a>
   </div>
 
   <div class="dash-header">
@@ -336,6 +336,32 @@ tr:hover td { background:#f8fafc; }
         </tr></thead>
         <tbody id="card-tbody"></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- ══ KPI GLOSSARY ══ -->
+  <div class="section-card" style="margin-top:24px">
+    <h3>Glosario de Métricas</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:4px">
+
+      <div><strong style="color:var(--blue)">CER — Card Effectiveness Rating</strong>
+      <p style="font-size:.83rem;color:var(--secondary);margin:.4rem 0 0">Puntuación 0-10 que mide qué tan competitivamente efectiva es una carta en el contexto del bracket. Se compone de 5 factores: Win Impact (WIR), Power Index (PIR), Turn Speed (TSC), Synergy (SYN) y Flexibility (FLX). Cartas S-Tier tienen CER ≥ 9; F-Tier están por debajo de 2.</p></div>
+
+      <div><strong style="color:var(--blue)">WCI — Win Contribution Index</strong>
+      <p style="font-size:.83rem;color:var(--secondary);margin:.4rem 0 0">Porcentaje (0-100%) que refleja cuánto contribuye cada carta a la estrategia de victoria del deck. Se calcula con tres componentes: presencia en combos del deck ponderada logarítmicamente por popularidad (50%), sinergia EDHREC con el comandante (30%) y rol de habilitador como tutores, fast mana y Game Changers (20%).</p></div>
+
+      <div><strong style="color:var(--blue)">BPS — Bracket Proximity Score</strong>
+      <p style="font-size:.83rem;color:var(--secondary);margin:.4rem 0 0">Qué tan cerca está el deck de alcanzar el siguiente bracket. Se evalúa en 5 dimensiones: densidad de Game Changers (30%), CER promedio (25%), velocidad de victoria (20%), densidad de tutores (15%) y presencia de combos (10%). Un BPS de 100% indica que el deck ya cumple los criterios del bracket superior.</p></div>
+
+      <div><strong style="color:var(--blue)">Curva de Victoria</strong>
+      <p style="font-size:.83rem;color:var(--secondary);margin:.4rem 0 0">Probabilidad de ganar en cada turno (T1-T10), modelada con distribución hipergeométrica. Considera el acceso a fast mana, mana rocks, tutores y piezas de combo en función del tamaño del deck y las cartas vistas en cada turno. "Puede ganar desde T3" significa que en ese turno la probabilidad acumulada supera el 50%.</p></div>
+
+      <div><strong style="color:var(--blue)">Tiers (S / A / B / C / D / F)</strong>
+      <p style="font-size:.83rem;color:var(--secondary);margin:.4rem 0 0">Clasificación basada en el CER: <b>S</b> ≥ 9.0 (impacto definitorio), <b>A</b> 7.5-8.9 (alta eficiencia), <b>B</b> 6.0-7.4 (sólidas), <b>C</b> 4.0-5.9 (funcionales), <b>D</b> 2.0-3.9 (situacionales), <b>F</b> &lt; 2.0 (reemplazables). Las cartas BANNED no se contemplan en el sistema de brackets vigente.</p></div>
+
+      <div><strong style="color:var(--blue)">Game Changers (GC)</strong>
+      <p style="font-size:.83rem;color:var(--secondary);margin:.4rem 0 0">Cartas designadas oficialmente por WotC que elevan de forma significativa el poder de un deck. Su presencia influye en la clasificación de bracket: 1-3 GC sitúa el deck en B3-B4; 4+ GC apunta a B4-B5 (cEDH). La lista se actualiza periódicamente e incluye las publicaciones hasta abril 2026.</p></div>
+
     </div>
   </div>
 
@@ -1485,13 +1511,13 @@ function downloadHTML() {
   // Embed current state as JSON so the file auto-renders when opened offline
   const saved = JSON.stringify({ report: state.report, combos: state.combos, commander: state.commander, bracket: state.bracket });
   const injection = `<script>
-document.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('load', function() {
   try {
     var s = ${saved};
     state.report = s.report; state.combos = s.combos;
     state.commander = s.commander; state.bracket = s.bracket;
     switchPanel('panel-dashboard');
-    renderDashboard(s.report, s.combos);
+    setTimeout(function(){ renderDashboard(s.report, s.combos); }, 150);
   } catch(e) { console.error('restore failed', e); }
 });
 \x3c/script>`;
